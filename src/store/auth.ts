@@ -12,6 +12,15 @@ interface AuthSliceState {
   loading: boolean;
 }
 
+export interface IAuthUser {
+  _id?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  exp?: number;
+  iat?: number;
+}
+
 const initialState: AuthSliceState = {
   user: {},
   isAuthenticated: false,
@@ -63,7 +72,7 @@ export const login = (user: object) => {
 export const getUser = createSelector(
   (state: any) => state.entities.auth,
   // check isAuthenticated or not, this function work either way
-  (auth: AuthSliceState) => (auth.isAuthenticated ? auth.user : {})
+  (auth: AuthSliceState) => (auth.isAuthenticated ? auth.user : null)
 );
 
 export const isLoading = createSelector(
