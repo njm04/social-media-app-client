@@ -10,7 +10,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
   props: PrivateRouteProps
 ) => {
   let { as: Comp, ...rest } = props;
-  console.log(props);
   return auth.getCurrentUser() ? (
     <Comp {...rest} />
   ) : (
