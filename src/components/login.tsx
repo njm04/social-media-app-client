@@ -58,6 +58,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // TODO: fix "await has no effect on the type of this expression"
     await dispatch(login({ email, password }));
     http.setJwt(auth.getJwt());
     dispatch(authReceived(auth.getCurrentUser()));
