@@ -13,14 +13,14 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Copyright from "./common/copyRight";
 import { authReceived, login } from "../store/auth";
 import auth from "../services/authService";
 import http from "../services/httpService";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     marginTop: theme.spacing(8),
     display: "flex",
@@ -56,15 +56,15 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(login({ email, password }));
+    await dispatch(login({ email, password }));
     http.setJwt(auth.getJwt());
     dispatch(authReceived(auth.getCurrentUser()));
     navigate("/news-feed");
   };
 
-  if (auth.getCurrentUser()) return <Redirect to="/" noThrow />;
+  if (auth.getCurrentUser()) return <Redirect to="/news-feed" noThrow />;
 
   return (
     <Container component="main" maxWidth="xs">

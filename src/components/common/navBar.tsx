@@ -1,4 +1,5 @@
 import React from "react";
+import { navigate } from "@reach/router";
 import {
   fade,
   makeStyles,
@@ -19,6 +20,9 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import { useDispatch } from "react-redux";
+import { userLoggedOut } from "../../store/auth";
+import auth from "../../services/authService";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -88,7 +92,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface NavBarProps {}
 
-const NavBar: React.SFC<NavBarProps> = () => {
+const NavBar: React.FC<NavBarProps> = () => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
@@ -112,6 +117,12 @@ const NavBar: React.SFC<NavBarProps> = () => {
     handleMobileMenuClose();
   };
 
+  const handleLogout = () => {
+    auth.logout();
+    dispatch(userLoggedOut({}));
+    navigate("/");
+  };
+
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -129,7 +140,7 @@ const NavBar: React.SFC<NavBarProps> = () => {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
 

@@ -7,7 +7,7 @@ const url = "/auth";
 const tokenKey = "token";
 
 interface AuthSliceState {
-  user: object;
+  user: object | null;
   isAuthenticated: boolean;
   loading: boolean;
 }
@@ -32,7 +32,7 @@ const slice = createSlice({
       localStorage.setItem(tokenKey, action.payload);
       auth.loading = false;
     },
-    authReceived: (auth, action: PayloadAction<object>) => {
+    authReceived: (auth, action: PayloadAction<object | null>) => {
       auth.user = action.payload;
       auth.isAuthenticated = !isEmpty(action.payload);
       auth.loading = false;

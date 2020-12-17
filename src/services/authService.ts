@@ -21,13 +21,13 @@ export const logout = () => {
   http.setJwt(false);
 };
 
-export const getCurrentUser = (): object => {
+export const getCurrentUser = (): object | null => {
   try {
     const jwt = localStorage.getItem(tokenKey);
     if (typeof jwt === "string") return jwtDecode(jwt);
-    return {};
+    return null;
   } catch (error) {
-    return {};
+    return null;
   }
 };
 
