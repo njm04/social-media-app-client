@@ -14,14 +14,15 @@ import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
+import Avatar from "@material-ui/core/Avatar";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import { useDispatch } from "react-redux";
-import { userLoggedOut } from "../../store/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { userLoggedOut, getUser, IAuthUser } from "../../store/auth";
 import auth from "../../services/authService";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -87,6 +88,9 @@ const useStyles = makeStyles((theme: Theme) =>
         display: "none",
       },
     },
+    userName: {
+      marginLeft: "10px",
+    },
   })
 );
 
@@ -94,6 +98,7 @@ export interface NavBarProps {}
 
 const NavBar: React.FC<NavBarProps> = () => {
   const dispatch = useDispatch();
+  const user: IAuthUser | null = useSelector(getUser);
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
@@ -103,6 +108,17 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const getInitials = () => {
+    if (user && user.firstName) {
+      return user.firstName
+        .split(" ")
+        .map((name) => name.charAt(0))
+        .join("")
+        .toUpperCase();
+    }
+    return "";
+  };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -215,6 +231,12 @@ const NavBar: React.FC<NavBarProps> = () => {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
+            <IconButton aria-label="show 4 new mails" color="inherit">
+              <Avatar>{getInitials()}</Avatar>
+              <Typography variant="h6" className={classes.userName}>
+                {user && user.firstName}
+              </Typography>
+            </IconButton>
             <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />
