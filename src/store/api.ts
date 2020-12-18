@@ -12,7 +12,7 @@ interface IApiCall {
   onStart?: string;
   onSuccess?: string;
   onFailure?: string;
-  data: object | string;
+  data?: object | string;
 }
 
 export const apiCallBegan = createAction<IApiCall>(apiCall.began);
