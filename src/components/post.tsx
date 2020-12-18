@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -9,6 +10,8 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
+import { createPost } from "../store/posts";
+import { getUser, IAuthUser } from "../store/auth";
 
 const useStyles = makeStyles({
   root: {
@@ -33,7 +36,19 @@ const useStyles = makeStyles({
 export interface PostProps {}
 
 const Post: React.FC<PostProps> = () => {
+  const dispatch = useDispatch();
+  const user: IAuthUser | null = useSelector(getUser);
   const classes = useStyles();
+  const [post, setPost] = useState("");
+
+  const handleChangePost = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setPost(e.target.value);
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    const postedBy: string = user && user._id ? user._id : "";
+    dispatch(createPost({ postedBy, post }));
+  };
 
   return (
     <>
@@ -48,6 +63,7 @@ const Post: React.FC<PostProps> = () => {
                 variant="outlined"
                 placeholder="What's on your mind?"
                 fullWidth
+                onChange={handleChangePost}
               />
             </CardContent>
             <CardActions>
@@ -55,6 +71,7 @@ const Post: React.FC<PostProps> = () => {
                 variant="contained"
                 className={classes.button}
                 size="small"
+                onClick={(e) => handleSubmit(e)}
               >
                 Post
               </Button>
