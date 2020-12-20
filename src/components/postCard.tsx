@@ -49,12 +49,12 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
     const sorted = orderBy(posts, ["createdAt"], ["desc"]);
     if (posts.length > 0) {
       return sorted.map((item) => (
-        <Box mt={2} bgcolor="background.paper">
+        <Box mt={2} bgcolor="background.paper" key={item._id}>
           <Card className={classes.root}>
             <CardContent>
               {item.post}
               <TextField
-                id="outlined-basic"
+                id={item._id}
                 variant="outlined"
                 fullWidth
                 size="small"
