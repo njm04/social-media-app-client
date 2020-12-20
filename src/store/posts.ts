@@ -1,14 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
-import { isEmpty } from "lodash";
 import { apiCallBegan } from "./api";
 
 const url = "/posts";
 
+interface IPostedBy {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+}
+
 export interface IPost {
   _id: string;
   post: string;
-  postedBy: string;
+  postedBy: IPostedBy;
   createdAt: string;
   updatedAt: string;
 }
