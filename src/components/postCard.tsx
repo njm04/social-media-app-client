@@ -77,8 +77,13 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
                     <Avatar>{getInitials(item.postedBy.firstName)}</Avatar>
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography>{item.post}</Typography>
+                    <Typography>{item.postedBy.fullName}</Typography>
                   </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Box px={7} py={2}>
+                    <Typography>{item.post}</Typography>
+                  </Box>
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom>
