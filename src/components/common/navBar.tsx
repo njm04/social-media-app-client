@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { navigate } from "@reach/router";
 import {
   fade,
@@ -24,6 +24,7 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedOut, getUser, IAuthUser } from "../../store/auth";
 import auth from "../../services/authService";
+import { getInitials } from "./../../utils/utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -99,6 +100,7 @@ export interface NavBarProps {}
 const NavBar: React.FC<NavBarProps> = () => {
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
+  const [name] = useState<string>(user && user.firstName ? user.firstName : "");
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
@@ -109,16 +111,13 @@ const NavBar: React.FC<NavBarProps> = () => {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const getInitials = () => {
-    if (user && user.firstName) {
-      return user.firstName
-        .split(" ")
-        .map((name) => name.charAt(0))
-        .join("")
-        .toUpperCase();
-    }
-    return "";
-  };
+  // if (user && user.firstName) {
+  //   return user.firstName
+  //     .split(" ")
+  //     .map((name) => name.charAt(0))
+  //     .join("")
+  //     .toUpperCase();
+  // }
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -232,7 +231,7 @@ const NavBar: React.FC<NavBarProps> = () => {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit">
-              <Avatar>{getInitials()}</Avatar>
+              <Avatar>{getInitials(name)}</Avatar>
               <Typography variant="h6" className={classes.userName}>
                 {user && user.firstName}
               </Typography>
