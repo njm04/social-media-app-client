@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { orderBy } from "lodash";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -12,8 +13,15 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
 import { getInitials } from "./../utils/utils";
 import { IPost } from "../store/posts";
+import { loadComments, createComment } from "../store/comments";
+import { loadCommentsCount, getCount } from "../store/commentCount";
+import { getUser, IAuthUser } from "../store/auth";
+import { getDate } from "../utils/utils";
+import Comment from "./comment";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,6 +53,9 @@ const useStyles = makeStyles((theme: Theme) =>
     postContent: {
       textAlign: "left",
     },
+    commentsCount: {
+      borderBottom: "1px solid",
+    },
   })
 );
 
@@ -54,18 +65,50 @@ export interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
   const classes = useStyles();
-  const onKeyEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const dispatch = useDispatch();
+  const user: IAuthUser | null = useSelector(getUser);
+  // TODO: figure out how to get comments count
+  // const commentCount = useSelector(getCount);
+  const [show, setShow] = useState(false);
+  const [id, setId] = useState("");
+  const [comment, setComment] = useState("");
+
+  const onKeyEnter = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    post: string,
+    comment: string
+  ) => {
+    const userId = user && user._id;
     if (e.key === "Enter") {
-      console.log("entered");
+      dispatch(createComment({ userId, post, comment }));
+      setComment("");
     }
   };
 
-  const getPostDate = (date: string) => {
-    return moment(date).format("MMMM Do YYYY, h:mm a");
+  const onClickShowComments = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    postId: string
+  ) => {
+    e.preventDefault();
+    setShow(true);
+    setId(postId);
+    dispatch(loadComments(postId));
+  };
+
+  const handleComment = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setComment(e.target.value);
+  };
+
+  const getCommentsCount = (count: number, postId: string) => {
+    // dispatch(loadCommentsCount(postId));
+    const commentsCount =
+      count === 1 ? `${count} Comment` : count > 1 ? `${count} Comments` : "";
+    return <Typography align="right">{commentsCount}</Typography>;
   };
 
   const postCards = () => {
     const sorted = orderBy(posts, ["createdAt"], ["desc"]);
+
     if (posts.length > 0) {
       return sorted.map((item) => (
         <Box mt={2} bgcolor="background.paper" key={item._id}>
@@ -87,18 +130,48 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Typography variant="caption" display="block" gutterBottom>
-                    {getPostDate(item.createdAt)}
+                    {getDate(item.createdAt)}
                   </Typography>
                 </Grid>
+                <Grid item xs={12}>
+                  {getCommentsCount(item.commentCount, item._id)}
+                  <Divider variant="fullWidth" component="hr" />
+                </Grid>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Button color="primary" fullWidth>
+                      Like
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Button
+                      color="primary"
+                      fullWidth
+                      onClick={(e) => onClickShowComments(e, item._id)}
+                    >
+                      Comment
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  {/* does item._id === id have another alternative way?*/}
+                  {show && item._id === id && (
+                    <>
+                      <TextField
+                        id={item._id}
+                        value={comment}
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        placeholder="Write a comment..."
+                        onKeyDown={(e) => onKeyEnter(e, item._id, comment)}
+                        onChange={handleComment}
+                      />
+                      <Comment postId={item._id} key={item._id} />
+                    </>
+                  )}
+                </Grid>
               </Paper>
-              <TextField
-                id={item._id}
-                variant="outlined"
-                fullWidth
-                size="small"
-                placeholder="Write a comment..."
-                onKeyDown={onKeyEnter}
-              />
             </CardContent>
           </Card>
         </Box>
@@ -106,6 +179,7 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
     }
     return "";
   };
+
   return (
     <>
       <CssBaseline />

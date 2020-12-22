@@ -17,6 +17,7 @@ export interface IPost {
   postedBy: IPostedBy;
   createdAt: string;
   updatedAt: string;
+  commentCount: number;
 }
 
 interface PostsSliceState {
