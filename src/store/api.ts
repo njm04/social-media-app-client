@@ -11,7 +11,7 @@ interface IApiCall {
   method: string;
   onStart?: string;
   onSuccess?: string;
-  onFailure?: string;
+  onError?: string;
   data?: object | string;
 }
 
