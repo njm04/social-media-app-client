@@ -21,7 +21,7 @@ export interface IPost {
 }
 
 interface PostsSliceState {
-  list: object[];
+  list: IPost[];
   loading: boolean;
 }
 
@@ -40,12 +40,21 @@ const slice = createSlice({
     postsFailed: (posts, action) => {
       posts.loading = false;
     },
-    newPostReceived: (posts, action: PayloadAction<object>) => {
+    newPostReceived: (posts, action: PayloadAction<IPost>) => {
       posts.list.push(action.payload);
       posts.loading = false;
     },
-    postsReceived: (posts, action: PayloadAction<object[]>) => {
+    postsReceived: (posts, action: PayloadAction<IPost[]>) => {
       posts.list = action.payload;
+      posts.loading = false;
+    },
+    postCommentIncremented: (
+      posts,
+      action: PayloadAction<{ post: string }>
+    ) => {
+      const { post: postId } = action.payload;
+      const index = posts.list.findIndex((post: any) => post._id === postId);
+      posts.list[index].commentCount += 1;
       posts.loading = false;
     },
   },
@@ -57,6 +66,8 @@ const {
   newPostReceived,
   postsReceived,
 } = slice.actions;
+
+export const { postCommentIncremented } = slice.actions;
 export default slice.reducer;
 
 export const createPost = (post: object) => {
@@ -66,7 +77,7 @@ export const createPost = (post: object) => {
     data: post,
     onStart: postsRequested.type,
     onSuccess: newPostReceived.type,
-    onFailure: postsFailed.type,
+    onError: postsFailed.type,
   });
 };
 
@@ -76,7 +87,7 @@ export const loadPosts = () => {
     method: "GET",
     onStart: postsRequested.type,
     onSuccess: postsReceived.type,
-    onFailure: postsFailed.type,
+    onError: postsFailed.type,
   });
 };
 
