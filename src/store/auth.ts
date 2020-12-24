@@ -64,7 +64,7 @@ export const login = (user: object) => {
     data: user,
     onStart: authRequested.type,
     onSuccess: authTokenReceived.type,
-    onFailure: authFailed.type,
+    onError: authFailed.type,
   });
 };
 
