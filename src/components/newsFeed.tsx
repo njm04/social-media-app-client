@@ -12,7 +12,7 @@ export interface NewsFeedProps extends RouteComponentProps {}
 const NewsFeed: React.FC<NewsFeedProps> = () => {
   const dispatch = useDispatch();
   const posts = useSelector(getAllPosts);
-  console.log(posts);
+
   useEffect((): any => dispatch(loadPosts()), [dispatch]);
 
   return (
