@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { orderBy } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -16,9 +15,12 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import { getInitials } from "./../utils/utils";
-import { IPost } from "../store/posts";
-import { loadComments, createComment } from "../store/comments";
-import { loadCommentsCount, getCount } from "../store/commentCount";
+import { IPost, postCommentIncremented } from "../store/posts";
+import {
+  loadComments,
+  createComment,
+  didCommentFailed,
+} from "../store/comments";
 import { getUser, IAuthUser } from "../store/auth";
 import { getDate } from "../utils/utils";
 import Comment from "./comment";
@@ -67,20 +69,16 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
-  // TODO: figure out how to get comments count
-  // const commentCount = useSelector(getCount);
+  const isFailed = useSelector(didCommentFailed);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
   const [comment, setComment] = useState("");
 
-  const onKeyEnter = (
-    e: React.KeyboardEvent<HTMLDivElement>,
-    post: string,
-    comment: string
-  ) => {
+  const onKeyEnter = (e: React.KeyboardEvent<HTMLDivElement>, post: string) => {
     const userId = user && user._id;
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && comment !== "") {
       dispatch(createComment({ userId, post, comment }));
+      if (!isFailed) dispatch(postCommentIncremented({ post }));
       setComment("");
     }
   };
@@ -99,8 +97,7 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
     setComment(e.target.value);
   };
 
-  const getCommentsCount = (count: number, postId: string) => {
-    // dispatch(loadCommentsCount(postId));
+  const getCommentsCount = (count: number) => {
     const commentsCount =
       count === 1 ? `${count} Comment` : count > 1 ? `${count} Comments` : "";
     return <Typography align="right">{commentsCount}</Typography>;
@@ -134,7 +131,7 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  {getCommentsCount(item.commentCount, item._id)}
+                  {getCommentsCount(item.commentCount)}
                   <Divider variant="fullWidth" component="hr" />
                 </Grid>
                 <Grid container spacing={2}>
@@ -164,7 +161,7 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
                         fullWidth
                         size="small"
                         placeholder="Write a comment..."
-                        onKeyDown={(e) => onKeyEnter(e, item._id, comment)}
+                        onKeyDown={(e) => onKeyEnter(e, item._id)}
                         onChange={handleComment}
                       />
                       <Comment postId={item._id} key={item._id} />
