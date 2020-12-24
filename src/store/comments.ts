@@ -22,11 +22,13 @@ export interface IComment {
 interface CommentsSliceState {
   list: IComment[];
   loading: boolean;
+  isError: boolean;
 }
 
 const initialState: CommentsSliceState = {
   list: [],
   loading: false,
+  isError: false,
 };
 
 const slice = createSlice({
@@ -35,18 +37,21 @@ const slice = createSlice({
   reducers: {
     commentsRequested: (comments, action) => {
       comments.loading = true;
+      comments.isError = false;
     },
     commentsFailed: (comments, action) => {
+      comments.isError = action.type === "comments/commentsFailed";
       comments.loading = false;
     },
     commentsReceived: (comments, action: PayloadAction<IComment[]>) => {
       comments.list = action.payload;
-      console.log(comments.list);
       comments.loading = false;
+      comments.isError = false;
     },
     newCommentReceived: (comments, action: PayloadAction<IComment>) => {
       comments.list.push(action.payload);
       comments.loading = false;
+      comments.isError = false;
     },
   },
 });
@@ -60,12 +65,13 @@ const {
 export default slice.reducer;
 
 export const loadComments = (postId: string) => {
+  console.log(postId);
   return apiCallBegan({
     url: `${url}/${postId}`,
     method: "GET",
     onStart: commentsRequested.type,
     onSuccess: commentsReceived.type,
-    onFailure: commentsFailed.type,
+    onError: commentsFailed.type,
   });
 };
 
@@ -76,7 +82,7 @@ export const createComment = (comment: object) => {
     data: comment,
     onStart: commentsRequested.type,
     onSuccess: newCommentReceived.type,
-    onFailure: commentsFailed.type,
+    onError: commentsFailed.type,
   });
 };
 
@@ -86,4 +92,9 @@ export const getComments = createSelector(
     memoize((postId: string) => {
       return comments.filter((comment) => comment.post === postId);
     })
+);
+
+export const didCommentFailed = createSelector(
+  (state: any) => state.entities.comments,
+  (comments: CommentsSliceState) => comments.isError
 );
