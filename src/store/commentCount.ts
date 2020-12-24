@@ -12,11 +12,13 @@ export interface ICommentsCount {
 
 interface CommentsSliceState {
   commentsCount: ICommentsCount;
+  list: ICommentsCount[];
   loading: boolean;
 }
 
 const initialState: CommentsSliceState = {
   commentsCount: {},
+  list: [],
   loading: false,
 };
 
@@ -30,8 +32,8 @@ const slice = createSlice({
     countFailed: (comments, action) => {
       comments.loading = false;
     },
-    countReceived: (comments, action: PayloadAction<ICommentsCount>) => {
-      comments.commentsCount = action.payload;
+    countReceived: (comments, action: PayloadAction<ICommentsCount[]>) => {
+      comments.list = action.payload;
       comments.loading = false;
     },
   },
@@ -40,17 +42,27 @@ const slice = createSlice({
 const { countRequested, countFailed, countReceived } = slice.actions;
 export default slice.reducer;
 
-export const loadCommentsCount = (postId: string) => {
+// export const loadCommentsCount = (postId: string) => {
+//   return apiCallBegan({
+//     url: `${url}/count/${postId}`,
+//     method: "GET",
+//     onStart: countRequested.type,
+//     onSuccess: countReceived.type,
+//     onError: countFailed.type,
+//   });
+// };
+
+export const loadCommentsCount = () => {
   return apiCallBegan({
-    url: `${url}/count/${postId}`,
+    url,
     method: "GET",
     onStart: countRequested.type,
-    onSuccess: countFailed.type,
-    onFailure: countReceived.type,
+    onSuccess: countReceived.type,
+    onError: countFailed.type,
   });
 };
 
 export const getCount = createSelector(
-  (state: any) => state.entities.commentsCount,
-  (commentsCount: ICommentsCount) => commentsCount
+  (state: any) => state.entities.commentsCount.list,
+  (commentsCount: ICommentsCount[]) => commentsCount
 );
