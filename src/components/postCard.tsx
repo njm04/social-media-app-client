@@ -15,15 +15,17 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import { getInitials } from "./../utils/utils";
-import { IPost, postCommentIncremented } from "../store/posts";
+import { IPost, IPostImages, postCommentIncremented } from "../store/posts";
 import {
   loadComments,
   createComment,
   didCommentFailed,
 } from "../store/comments";
+import { IImage } from "../store/images";
 import { getUser, IAuthUser } from "../store/auth";
 import { getDate } from "../utils/utils";
 import Comment from "./comment";
+import ImageUploadGrid from "./imageUploadGrid";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -63,9 +65,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface PostCardProps {
   posts: IPost[];
+  images: IImage[];
 }
 
-const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
+const PostCard: React.FC<PostCardProps> = ({
+  posts,
+  images,
+}: PostCardProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
@@ -103,6 +109,20 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
     return <Typography align="right">{commentsCount}</Typography>;
   };
 
+  const displayPostImage = (postImages: IPostImages[]) => {
+    if (postImages && postImages.length > 0) {
+      if (postImages.length === 1) {
+        return <ImageUploadGrid images={postImages} cols={1} />;
+      } else if (images.length === 2) {
+        return <ImageUploadGrid images={postImages} cols={2} />;
+      } else {
+        return <ImageUploadGrid images={postImages} cols={2} />;
+      }
+    }
+
+    return;
+  };
+
   const postCards = () => {
     const sorted = orderBy(posts, ["createdAt"], ["desc"]);
 
@@ -123,6 +143,7 @@ const PostCard: React.FC<PostCardProps> = ({ posts }: PostCardProps) => {
                 <Grid item xs={12}>
                   <Box px={7} py={2}>
                     <Typography>{item.post}</Typography>
+                    {displayPostImage(item.postImages)}
                   </Box>
                 </Grid>
                 <Grid item xs={12}>

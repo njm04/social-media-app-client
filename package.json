@@ -19,6 +19,7 @@
     "@types/react-redux": "^7.1.12",
     "@types/redux": "^3.6.0",
     "axios": "^0.21.0",
+    "firebase": "^8.2.1",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",

@@ -11,6 +11,11 @@ interface IPostedBy {
   fullName: string;
 }
 
+export interface IPostImages {
+  name: string;
+  url: string;
+}
+
 export interface IPost {
   _id: string;
   post: string;
@@ -18,6 +23,7 @@ export interface IPost {
   createdAt: string;
   updatedAt: string;
   commentCount: number;
+  postImages: IPostImages[];
 }
 
 interface PostsSliceState {
