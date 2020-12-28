@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps } from "@reach/router";
 import { loadPosts, getAllPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
+import { loadLikes } from "../store/likes";
 import NavBar from "./common/navBar";
 import Post from "./post";
 import PostCard from "./postCard";
@@ -17,6 +18,7 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
   useEffect((): any => {
     dispatch(loadPosts());
     dispatch(loadImages());
+    dispatch(loadLikes());
   }, [dispatch]);
 
   return (

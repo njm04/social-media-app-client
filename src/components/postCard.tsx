@@ -14,6 +14,8 @@ import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
+import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import { getInitials } from "./../utils/utils";
 import {
   IPost,
@@ -117,7 +119,8 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const getLikes = (likes: number) => {
     if (likes) {
-      const likesCount = likes === 1 ? `${likes} like` : `${likes} likes`;
+      const likesCount =
+        likes === 0 ? "" : likes === 1 ? `${likes} like` : `${likes} likes`;
       return <Typography align="left">{likesCount}</Typography>;
     }
     return "";
@@ -179,8 +182,9 @@ const PostCard: React.FC<PostCardProps> = ({
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Button
-                      color="primary"
+                      color="default"
                       fullWidth
+                      startIcon={<ThumbUpAltIcon />}
                       onClick={() => handleLike(item._id)}
                     >
                       Like
@@ -188,8 +192,9 @@ const PostCard: React.FC<PostCardProps> = ({
                   </Grid>
                   <Grid item xs={6}>
                     <Button
-                      color="primary"
+                      color="default"
                       fullWidth
+                      startIcon={<ChatBubbleIcon />}
                       onClick={(e) => onClickShowComments(e, item._id)}
                     >
                       Comment

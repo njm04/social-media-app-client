@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 
@@ -119,4 +120,10 @@ export const likePost = (data: object) => {
 export const getAllPosts = createSelector(
   (state: any) => state.entities.posts.list,
   (posts: IPost[]) => posts
+);
+
+export const getPost = createSelector(
+  (state: any) => state.entities.posts.list,
+  (posts: IPost[]) =>
+    memoize((postId: string) => posts.find((post) => post._id === postId))
 );
