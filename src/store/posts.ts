@@ -23,6 +23,7 @@ export interface IPost {
   createdAt: string;
   updatedAt: string;
   commentCount: number;
+  likes: number;
   postImages: IPostImages[];
 }
 
@@ -63,6 +64,12 @@ const slice = createSlice({
       posts.list[index].commentCount += 1;
       posts.loading = false;
     },
+    postsLikesReceived: (posts, action: PayloadAction<IPost>) => {
+      const { _id } = action.payload;
+      const index = posts.list.findIndex((post: any) => post._id === _id);
+      posts.list[index].likes = action.payload.likes;
+      posts.loading = false;
+    },
   },
 });
 
@@ -71,6 +78,7 @@ const {
   postsFailed,
   newPostReceived,
   postsReceived,
+  postsLikesReceived,
 } = slice.actions;
 
 export const { postCommentIncremented } = slice.actions;
@@ -93,6 +101,17 @@ export const loadPosts = () => {
     method: "GET",
     onStart: postsRequested.type,
     onSuccess: postsReceived.type,
+    onError: postsFailed.type,
+  });
+};
+
+export const likePost = (data: object) => {
+  return apiCallBegan({
+    url: `${url}/like`,
+    method: "POST",
+    data,
+    onStart: postsRequested.type,
+    onSuccess: postsLikesReceived.type,
     onError: postsFailed.type,
   });
 };

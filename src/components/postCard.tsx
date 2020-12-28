@@ -15,12 +15,18 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import { getInitials } from "./../utils/utils";
-import { IPost, IPostImages, postCommentIncremented } from "../store/posts";
+import {
+  IPost,
+  IPostImages,
+  postCommentIncremented,
+  likePost,
+} from "../store/posts";
 import {
   loadComments,
   createComment,
   didCommentFailed,
 } from "../store/comments";
+import { addLike } from "../store/likes";
 import { IImage } from "../store/images";
 import { getUser, IAuthUser } from "../store/auth";
 import { getDate } from "../utils/utils";
@@ -89,6 +95,12 @@ const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  const handleLike = (postId: string) => {
+    const userId = user && user._id;
+    dispatch(likePost({ postId, userId }));
+    dispatch(addLike({ postId, userId }));
+  };
+
   const onClickShowComments = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     postId: string
@@ -101,6 +113,14 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleComment = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
+  };
+
+  const getLikes = (likes: number) => {
+    if (likes) {
+      const likesCount = likes === 1 ? `${likes} like` : `${likes} likes`;
+      return <Typography align="left">{likesCount}</Typography>;
+    }
+    return "";
   };
 
   const getCommentsCount = (count: number) => {
@@ -152,12 +172,17 @@ const PostCard: React.FC<PostCardProps> = ({
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
+                  {getLikes(item.likes)}
                   {getCommentsCount(item.commentCount)}
                   <Divider variant="fullWidth" component="hr" />
                 </Grid>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
-                    <Button color="primary" fullWidth>
+                    <Button
+                      color="primary"
+                      fullWidth
+                      onClick={() => handleLike(item._id)}
+                    >
                       Like
                     </Button>
                   </Grid>
