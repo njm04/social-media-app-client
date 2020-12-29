@@ -34,6 +34,7 @@ import { getUser, IAuthUser } from "../store/auth";
 import { getDate } from "../utils/utils";
 import Comment from "./comment";
 import ImageUploadGrid from "./imageUploadGrid";
+import PostMenu from "./common/postMenu";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -161,6 +162,12 @@ const PostCard: React.FC<PostCardProps> = ({
                   </Grid>
                   <Grid item xs={12}>
                     <Typography>{item.postedBy.fullName}</Typography>
+                    <Typography variant="caption" display="block" gutterBottom>
+                      {getDate(item.createdAt)}
+                    </Typography>
+                  </Grid>
+                  <Grid item container justify="flex-end" xs={6}>
+                    <PostMenu postId={item._id} />
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
@@ -168,11 +175,6 @@ const PostCard: React.FC<PostCardProps> = ({
                     <Typography>{item.post}</Typography>
                     {displayPostImage(item.postImages)}
                   </Box>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography variant="caption" display="block" gutterBottom>
-                    {getDate(item.createdAt)}
-                  </Typography>
                 </Grid>
                 <Grid item xs={12}>
                   {getLikes(item.likes)}

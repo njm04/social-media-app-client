@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
@@ -71,6 +72,13 @@ const slice = createSlice({
       posts.list[index].likes = action.payload.likes;
       posts.loading = false;
     },
+    postDeleted: (posts, action: PayloadAction<IPost>) => {
+      const { _id } = action.payload;
+      const index = posts.list.findIndex((post: any) => post._id === _id);
+      posts.list.splice(index, 1);
+      toast.dark("Post deleted!");
+      posts.loading = false;
+    },
   },
 });
 
@@ -80,6 +88,7 @@ const {
   newPostReceived,
   postsReceived,
   postsLikesReceived,
+  postDeleted,
 } = slice.actions;
 
 export const { postCommentIncremented } = slice.actions;
@@ -113,6 +122,17 @@ export const likePost = (data: object) => {
     data,
     onStart: postsRequested.type,
     onSuccess: postsLikesReceived.type,
+    onError: postsFailed.type,
+  });
+};
+
+export const deletePost = (id: string) => {
+  console.log(id);
+  return apiCallBegan({
+    url: `${url}/${id}`,
+    method: "DELETE",
+    onStart: postsRequested.type,
+    onSuccess: postDeleted.type,
     onError: postsFailed.type,
   });
 };
