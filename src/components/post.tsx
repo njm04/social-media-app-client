@@ -6,8 +6,10 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import PhotoIcon from "@material-ui/icons/Photo";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { createPost } from "../store/posts";
 import { getUser, IAuthUser } from "../store/auth";
@@ -149,32 +151,39 @@ const Post: React.FC<PostProps> = () => {
               {imageUploadView()}
             </CardContent>
             <CardActions>
-              <Button
-                variant="contained"
-                className={classes.button}
-                size="small"
-                onClick={(e) => handleSubmit(e)}
-              >
-                Post
-              </Button>
-              <input
-                accept="image/*"
-                className={classes.input}
-                id="contained-button-file"
-                multiple
-                type="file"
-                onChange={handleImageUpload}
-              />
-              <label htmlFor="contained-button-file">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component="span"
-                  size="small"
-                >
-                  Upload
-                </Button>
-              </label>
+              <Grid container wrap="nowrap" spacing={2}>
+                <Grid item container justify="flex-start" xs={6}>
+                  <input
+                    accept="image/*"
+                    className={classes.input}
+                    id="contained-button-file"
+                    multiple
+                    type="file"
+                    onChange={handleImageUpload}
+                  />
+                  <label htmlFor="contained-button-file">
+                    <Button
+                      // variant="contained"
+                      color="primary"
+                      component="span"
+                      size="small"
+                      startIcon={<PhotoIcon />}
+                    >
+                      Photo
+                    </Button>
+                  </label>
+                </Grid>
+                <Grid item container justify="flex-end" xs={6}>
+                  <Button
+                    // variant="contained"
+                    className={classes.button}
+                    size="small"
+                    onClick={(e) => handleSubmit(e)}
+                  >
+                    Post
+                  </Button>
+                </Grid>
+              </Grid>
             </CardActions>
           </Card>
         </Box>
