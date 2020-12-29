@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { deleteUploadedImages } from "../utils/utils";
 
 const url = "/posts";
 
@@ -75,6 +76,7 @@ const slice = createSlice({
     postDeleted: (posts, action: PayloadAction<IPost>) => {
       const { _id } = action.payload;
       const index = posts.list.findIndex((post: any) => post._id === _id);
+      deleteUploadedImages(posts.list[index].postImages);
       posts.list.splice(index, 1);
       toast.dark("Post deleted!");
       posts.loading = false;
