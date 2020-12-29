@@ -127,7 +127,6 @@ export const likePost = (data: object) => {
 };
 
 export const deletePost = (id: string) => {
-  console.log(id);
   return apiCallBegan({
     url: `${url}/${id}`,
     method: "DELETE",
