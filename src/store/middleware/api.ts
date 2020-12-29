@@ -3,7 +3,6 @@ import { Dispatch } from "redux";
 import * as actions from "../api";
 
 const baseURL = process.env.REACT_APP_SOCIAL_MEDIA_API_URL;
-console.log(baseURL);
 
 const api = (store: { dispatch: Dispatch }) => (next: Function) => async (
   action: any
