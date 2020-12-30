@@ -35,6 +35,7 @@ import { getDate } from "../utils/utils";
 import Comment from "./comment";
 import ImageUploadGrid from "./imageUploadGrid";
 import PostMenu from "./common/postMenu";
+import EditPostModal from "./editPostModal";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -88,6 +89,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
   const [comment, setComment] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   const onKeyEnter = (e: React.KeyboardEvent<HTMLDivElement>, post: string) => {
     const userId = user && user._id;
@@ -167,7 +169,11 @@ const PostCard: React.FC<PostCardProps> = ({
                     </Typography>
                   </Grid>
                   <Grid item container justify="flex-end" xs={6}>
-                    <PostMenu postId={item._id} />
+                    <PostMenu
+                      postId={item._id}
+                      setOpenModal={setOpenModal}
+                      setId={setId}
+                    />
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
@@ -234,6 +240,7 @@ const PostCard: React.FC<PostCardProps> = ({
     <>
       <CssBaseline />
       <Container maxWidth="md">{postCards()}</Container>
+      <EditPostModal open={openModal} setOpenModal={setOpenModal} postId={id} />
     </>
   );
 };

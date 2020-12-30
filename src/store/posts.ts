@@ -81,6 +81,13 @@ const slice = createSlice({
       toast.dark("Post deleted!");
       posts.loading = false;
     },
+    postEdited: (posts, action: PayloadAction<IPost>) => {
+      const { _id } = action.payload;
+      const index = posts.list.findIndex((post: IPost) => post._id === _id);
+      posts.list[index] = action.payload;
+      posts.loading = false;
+      toast.dark("Post updated!");
+    },
   },
 });
 
@@ -91,6 +98,7 @@ const {
   postsReceived,
   postsLikesReceived,
   postDeleted,
+  postEdited,
 } = slice.actions;
 
 export const { postCommentIncremented } = slice.actions;
@@ -134,6 +142,23 @@ export const deletePost = (id: string) => {
     method: "DELETE",
     onStart: postsRequested.type,
     onSuccess: postDeleted.type,
+    onError: postsFailed.type,
+  });
+};
+
+interface IEditPost {
+  id: string;
+  newPost: string;
+}
+
+export const editPost = (data: IEditPost) => {
+  const { id } = data;
+  return apiCallBegan({
+    url: `${url}/${id}`,
+    method: "PATCH",
+    data,
+    onStart: postsRequested.type,
+    onSuccess: postEdited.type,
     onError: postsFailed.type,
   });
 };

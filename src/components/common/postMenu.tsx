@@ -44,9 +44,15 @@ const StyledMenuItem = withStyles((theme) => ({
 
 export interface PostMenuProps {
   postId: string;
+  setId: React.Dispatch<React.SetStateAction<string>>;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostMenu: React.FC<PostMenuProps> = ({ postId }: PostMenuProps) => {
+const PostMenu: React.FC<PostMenuProps> = ({
+  postId,
+  setId,
+  setOpenModal,
+}: PostMenuProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const dispatch = useDispatch();
 
@@ -55,6 +61,12 @@ const PostMenu: React.FC<PostMenuProps> = ({ postId }: PostMenuProps) => {
   };
 
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleEdit = () => {
+    setOpenModal(true);
+    setId(postId);
     setAnchorEl(null);
   };
 
@@ -82,7 +94,7 @@ const PostMenu: React.FC<PostMenuProps> = ({ postId }: PostMenuProps) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledMenuItem onClick={handleClose}>
+        <StyledMenuItem onClick={handleEdit}>
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>
