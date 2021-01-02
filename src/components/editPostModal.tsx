@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import {
   createStyles,
   Theme,
@@ -124,8 +125,12 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
   };
 
   const handleEdit = () => {
-    if (post) dispatch(editPost({ id: post._id, newPost: postContent }));
-    setOpenModal(false);
+    if (post && postContent) {
+      dispatch(editPost({ id: post._id, newPost: postContent }));
+      setOpenModal(false);
+    } else {
+      toast.error("Post needs to have at least 1 character to be edited.");
+    }
   };
 
   useEffect((): any => {
