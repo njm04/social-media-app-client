@@ -17,6 +17,7 @@ export interface IAuthUser {
   email?: string;
   firstName?: string;
   lastName?: string;
+  fullName?: string;
   exp?: number;
   iat?: number;
 }
