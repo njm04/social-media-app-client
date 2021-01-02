@@ -20,6 +20,7 @@ import ImageUploadGrid from "./imageUploadGrid";
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
+    marginTop: "15vh",
   },
   bullet: {
     display: "inline-block",
