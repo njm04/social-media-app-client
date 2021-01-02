@@ -5,6 +5,7 @@ import commentsReducer from "./comments";
 import commentsCountReducer from "./commentCount";
 import imagesReducer from "./images";
 import likesReducer from "./likes";
+import usersReducer from "./users";
 
 export default combineReducers({
   auth: authReducer,
@@ -13,4 +14,5 @@ export default combineReducers({
   commentsCount: commentsCountReducer,
   images: imagesReducer,
   likes: likesReducer,
+  users: usersReducer,
 });
