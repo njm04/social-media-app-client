@@ -24,7 +24,7 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedOut, getUser, IAuthUser } from "../../store/auth";
 import auth from "../../services/authService";
-import { getInitials } from "./../../utils/utils";
+import { getInitials, getProfileName } from "./../../utils/utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     title: {
       display: "none",
+      cursor: "pointer",
       [theme.breakpoints.up("sm")]: {
         display: "block",
       },
@@ -123,6 +124,18 @@ const NavBar: React.FC<NavBarProps> = () => {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleProfileOpen = (event: React.MouseEvent<HTMLElement>) => {
+    let userData: IAuthUser = {};
+    let profileNameUrl: string = "";
+    if (user) {
+      userData = user;
+      profileNameUrl = getProfileName(userData);
+    }
+    navigate(`/profile/${profileNameUrl}`, { state: { userData } });
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  };
+
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
@@ -153,7 +166,7 @@ const NavBar: React.FC<NavBarProps> = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
       {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
@@ -202,7 +215,7 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <IconButton
             edge="start"
@@ -212,8 +225,13 @@ const NavBar: React.FC<NavBarProps> = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            Material-UI
+          <Typography
+            className={classes.title}
+            variant="h6"
+            noWrap
+            onClick={() => navigate("/news-feed")}
+          >
+            Facebook-Clone
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>

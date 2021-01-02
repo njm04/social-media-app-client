@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/common/privateRoute";
 import Login from "./components/login";
 import NewsFeed from "./components/newsFeed";
+import Profile from "./components/profile";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Router>
         <Login path="/" />
         <PrivateRoute as={NewsFeed} path="/news-feed" />
+        <PrivateRoute as={Profile} path="/profile/:name" />
       </Router>
     </div>
   );

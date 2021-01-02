@@ -173,3 +173,11 @@ export const getPost = createSelector(
   (posts: IPost[]) =>
     memoize((postId: string) => posts.find((post) => post._id === postId))
 );
+
+export const getUserPosts = createSelector(
+  (state: any) => state.entities.posts.list,
+  (posts: IPost[]) =>
+    memoize((userId: string) =>
+      posts.filter((post) => post.postedBy._id === userId)
+    )
+);
