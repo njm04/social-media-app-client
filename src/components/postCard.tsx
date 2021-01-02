@@ -32,6 +32,7 @@ import { addLike } from "../store/likes";
 import { IImage } from "../store/images";
 import { getUser, IAuthUser } from "../store/auth";
 import { getDate } from "../utils/utils";
+import { getProfilePicture } from "../store/users";
 import Comment from "./comment";
 import ImageUploadGrid from "./imageUploadGrid";
 import PostMenu from "./common/postMenu";
@@ -85,6 +86,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
+  const profPicSelector = useSelector(getProfilePicture);
   const isFailed = useSelector(didCommentFailed);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
@@ -149,6 +151,14 @@ const PostCard: React.FC<PostCardProps> = ({
     return;
   };
 
+  const profilePicture = () => {
+    if (user && user._id) {
+      const data = profPicSelector(user._id);
+      return data ? data : {};
+    }
+    return {};
+  };
+
   const postCards = () => {
     const sorted = orderBy(posts, ["createdAt"], ["desc"]);
 
@@ -160,7 +170,14 @@ const PostCard: React.FC<PostCardProps> = ({
               <Paper className={classes.paper}>
                 <Grid container wrap="nowrap" spacing={2}>
                   <Grid item>
-                    <Avatar>{getInitials(item.postedBy.firstName)}</Avatar>
+                    {profilePicture() !== {} ? (
+                      <Avatar
+                        alt={profilePicture().name}
+                        src={profilePicture().url}
+                      />
+                    ) : (
+                      <Avatar>{getInitials(item.postedBy.firstName)}</Avatar>
+                    )}
                   </Grid>
                   <Grid item xs={12}>
                     <Typography>{item.postedBy.fullName}</Typography>

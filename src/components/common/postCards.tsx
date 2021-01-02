@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
 import Avatar from "@material-ui/core/Avatar";
-import FolderIcon from "@material-ui/icons/Folder";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import Paper from "@material-ui/core/Paper";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -30,6 +26,7 @@ import {
 import { IImage } from "../../store/images";
 import { addLike } from "../../store/likes";
 import { getInitials, getDate } from "../../utils/utils";
+import { getProfilePicture } from "../../store/users";
 import Comment from "../comment";
 import ImageUploadGrid from "../imageUploadGrid";
 import PostMenu from "./postMenu";
@@ -81,6 +78,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const isFailed = useSelector(didCommentFailed);
+  const profPicSelector = useSelector(getProfilePicture);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
   const [comment, setComment] = useState("");
@@ -110,6 +108,11 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleComment = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
+  };
+
+  const profilePicture = () => {
+    const data = profPicSelector(userId);
+    return data ? data : {};
   };
 
   const getLikes = (likes: number) => {
@@ -150,7 +153,14 @@ const PostCard: React.FC<PostCardProps> = ({
               {/* <Paper className={classes.paper}> */}
               <Grid container wrap="nowrap" spacing={2}>
                 <Grid item>
-                  <Avatar>{getInitials(post.postedBy.firstName)}</Avatar>
+                  {profilePicture() !== {} ? (
+                    <Avatar
+                      alt={profilePicture().name}
+                      src={profilePicture().url}
+                    />
+                  ) : (
+                    <Avatar>{getInitials(post.postedBy.firstName)}</Avatar>
+                  )}
                 </Grid>
                 <Grid item xs={12}>
                   <Typography>{post.postedBy.fullName}</Typography>
