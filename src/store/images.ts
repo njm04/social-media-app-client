@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 
@@ -59,4 +60,10 @@ export const loadImages = () => {
 export const getImages = createSelector(
   (state: any) => state.entities.images.list,
   (images: IImage[]) => images
+);
+
+export const getUserImages = createSelector(
+  (state: any) => state.entities.images.list,
+  (images: IImage[]) =>
+    memoize((userId: string) => images.filter((image) => image._id === userId))
 );
