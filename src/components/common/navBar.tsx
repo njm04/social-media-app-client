@@ -23,9 +23,9 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedOut, getUser, IAuthUser } from "../../store/auth";
-import { getProfilePicture } from "../../store/users";
 import auth from "../../services/authService";
 import { getInitials, getProfileName } from "./../../utils/utils";
+import { getProfilePicture } from "../../store/users";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -102,7 +102,8 @@ export interface NavBarProps {}
 const NavBar: React.FC<NavBarProps> = () => {
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
-  const profPicSelector = useSelector(getProfilePicture);
+  const userId = user && user._id ? user._id : "";
+  const profilePicture = useSelector(getProfilePicture)(userId);
   const [name] = useState<string>(user && user.firstName ? user.firstName : "");
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -113,14 +114,6 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const profilePicture = () => {
-    if (user && user._id) {
-      const data = profPicSelector(user._id);
-      return data ? data : {};
-    }
-    return {};
-  };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -251,12 +244,10 @@ const NavBar: React.FC<NavBarProps> = () => {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit">
-              {profilePicture() !== {} ? (
-                <Avatar
-                  alt={profilePicture().name}
-                  src={profilePicture().url}
-                />
+              {profilePicture ? (
+                <Avatar alt={profilePicture.name} src={profilePicture.url} />
               ) : (
+                // FIX: not working
                 <Avatar>{getInitials(name)}</Avatar>
               )}
               <Typography variant="h6" className={classes.userName}>

@@ -151,12 +151,13 @@ const PostCard: React.FC<PostCardProps> = ({
     return;
   };
 
-  const profilePicture = () => {
-    if (user && user._id) {
-      const data = profPicSelector(user._id);
-      return data ? data : {};
-    }
-    return {};
+  const profilePicture = (userId: string, firstName: string) => {
+    const profPic = profPicSelector(userId);
+    return profPic ? (
+      <Avatar alt={profPic.name} src={profPic.url} />
+    ) : (
+      <Avatar>{getInitials(firstName)}</Avatar>
+    );
   };
 
   const postCards = () => {
@@ -170,14 +171,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <Paper className={classes.paper}>
                 <Grid container wrap="nowrap" spacing={2}>
                   <Grid item>
-                    {profilePicture() !== {} ? (
-                      <Avatar
-                        alt={profilePicture().name}
-                        src={profilePicture().url}
-                      />
-                    ) : (
-                      <Avatar>{getInitials(item.postedBy.firstName)}</Avatar>
-                    )}
+                    {profilePicture(item.postedBy._id, item.postedBy.firstName)}
                   </Grid>
                   <Grid item xs={12}>
                     <Typography>{item.postedBy.fullName}</Typography>
