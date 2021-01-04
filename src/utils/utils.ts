@@ -4,11 +4,13 @@ import { IPostImages } from "../store/posts";
 import { IAuthUser } from "../store/auth";
 
 export const getInitials = (name: string) => {
-  return name
-    .split(" ")
-    .map((initial) => initial.charAt(0))
-    .join("")
-    .toUpperCase();
+  if (name)
+    return name
+      .split(" ")
+      .map((initial) => initial.charAt(0))
+      .join("")
+      .toUpperCase();
+  return "";
 };
 
 export const getProfileName = (data: IAuthUser) => {
