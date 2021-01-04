@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { orderBy } from "lodash";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
@@ -79,6 +80,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const dispatch = useDispatch();
   const isFailed = useSelector(didCommentFailed);
   const profPicSelector = useSelector(getProfilePicture);
+  const sorted = orderBy(posts, ["createdAt"], ["desc"]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
   const [comment, setComment] = useState("");
@@ -150,7 +152,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   return (
     <>
-      {posts.map((post) => (
+      {sorted.map((post) => (
         <Box mt={2} bgcolor="background.paper" key={post._id}>
           <Card className={classes.card}>
             <CardContent className={classes.postContent}>
