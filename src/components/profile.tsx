@@ -64,6 +64,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const userPosts = useSelector(getUserPosts)(userId);
   const profilePicture = useSelector(getProfilePicture)(userId);
   const [openModal, setOpenModal] = useState(false);
+  const [openEditProfileModal, setopenEditProfileModal] = useState(false);
   const [id, setPostId] = useState("");
 
   useEffect((): any => {
@@ -97,9 +98,12 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                 }}
               >
                 {profilePicture ? (
-                  <Avatar alt={profilePicture.name} src={profilePicture.url} />
+                  <Avatar
+                    className={classes.avatar}
+                    alt={profilePicture.name}
+                    src={profilePicture.url}
+                  />
                 ) : (
-                  // FIX: not working
                   <Avatar className={classes.avatar}>
                     {getInitials(user.fullName)}
                   </Avatar>
@@ -123,10 +127,10 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                 </Box>
               </Paper>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <Paper className={classes.paper}>xs=12 sm=6</Paper>
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            </Grid> */}
+            <Grid item xs={12} sm={12}>
               <PostCard
                 userId={userId}
                 posts={userPosts}
@@ -140,8 +144,8 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
       </Container>
       <EditPostModal open={openModal} setOpenModal={setOpenModal} postId={id} />
       <EditProfileModal
-        open={openModal}
-        setOpenModal={setOpenModal}
+        open={openEditProfileModal}
+        setopenEditProfileModal={setopenEditProfileModal}
         userId={userId}
         profImage={profilePicture ? profilePicture : {}}
       />

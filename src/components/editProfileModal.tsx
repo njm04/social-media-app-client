@@ -109,7 +109,7 @@ export interface EditProfileModalProps {
   open: boolean;
   userId: string;
   profImage: IProfPic;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setopenEditProfileModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type ImageData = {
@@ -121,7 +121,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   open,
   userId,
   profImage,
-  setOpenModal,
+  setopenEditProfileModal,
 }: EditProfileModalProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -129,7 +129,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [imageData, setImageData] = useState<object[]>();
 
   const handleClose = () => {
-    setOpenModal(false);
+    setopenEditProfileModal(false);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
