@@ -13,7 +13,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = (
   return auth.getCurrentUser() ? (
     <Comp {...rest} />
   ) : (
-    <Redirect to="/" noThrow />
+    <Redirect to="/login" noThrow />
   );
 };
 
