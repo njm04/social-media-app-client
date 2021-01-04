@@ -171,7 +171,7 @@ const PostCard: React.FC<PostCardProps> = ({
               <Paper className={classes.paper}>
                 <Grid container wrap="nowrap" spacing={2}>
                   <Grid item>
-                    {profilePicture(item.postedBy._id, item.postedBy.firstName)}
+                    {profilePicture(item.postedBy._id, item.postedBy.fullName)}
                   </Grid>
                   <Grid item xs={12}>
                     <Typography>{item.postedBy.fullName}</Typography>

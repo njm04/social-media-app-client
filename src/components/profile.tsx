@@ -16,7 +16,7 @@ import { loadImages, getImages } from "../store/images";
 import { getProfilePicture } from "../store/users";
 import { loadUsers } from "../store/users";
 import { loadLikes } from "../store/likes";
-import NavBar from "./common/navBar";
+import { getInitials } from "../utils/utils";
 import EditPostModal from "./editPostModal";
 import PostCard from "./common/postCards";
 import EditProfileModal from "./editProfileModal";
@@ -79,7 +79,6 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
 
   return (
     <>
-      <NavBar />
       <CssBaseline />
       <Container maxWidth="lg" style={{ marginTop: "7vh" }}>
         <div
@@ -97,11 +96,14 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                   height: "300px",
                 }}
               >
-                <Avatar
-                  className={classes.avatar}
-                  alt={profilePicture?.name}
-                  src={profilePicture?.url}
-                ></Avatar>
+                {profilePicture ? (
+                  <Avatar alt={profilePicture.name} src={profilePicture.url} />
+                ) : (
+                  // FIX: not working
+                  <Avatar className={classes.avatar}>
+                    {getInitials(user.fullName)}
+                  </Avatar>
+                )}
               </Box>
             </Grid>
             <Grid item xs={12}>

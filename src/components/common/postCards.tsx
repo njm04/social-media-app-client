@@ -110,9 +110,13 @@ const PostCard: React.FC<PostCardProps> = ({
     setComment(e.target.value);
   };
 
-  const profilePicture = () => {
-    const data = profPicSelector(userId);
-    return data ? data : {};
+  const profilePicture = (firstName: string) => {
+    const profPic = profPicSelector(userId);
+    return profPic ? (
+      <Avatar alt={profPic.name} src={profPic.url} />
+    ) : (
+      <Avatar>{getInitials(firstName)}</Avatar>
+    );
   };
 
   const getLikes = (likes: number) => {
@@ -152,16 +156,7 @@ const PostCard: React.FC<PostCardProps> = ({
             <CardContent className={classes.postContent}>
               {/* <Paper className={classes.paper}> */}
               <Grid container wrap="nowrap" spacing={2}>
-                <Grid item>
-                  {profilePicture() !== {} ? (
-                    <Avatar
-                      alt={profilePicture().name}
-                      src={profilePicture().url}
-                    />
-                  ) : (
-                    <Avatar>{getInitials(post.postedBy.firstName)}</Avatar>
-                  )}
-                </Grid>
+                <Grid item>{profilePicture(post.postedBy.fullName)}</Grid>
                 <Grid item xs={12}>
                   <Typography>{post.postedBy.fullName}</Typography>
                   <Typography variant="caption" display="block" gutterBottom>

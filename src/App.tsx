@@ -7,6 +7,7 @@ import PrivateRoute from "./components/common/privateRoute";
 import Login from "./components/login";
 import NewsFeed from "./components/newsFeed";
 import Profile from "./components/profile";
+import Root from "./components/root";
 
 function App() {
   return (
@@ -23,9 +24,11 @@ function App() {
         pauseOnHover
       />
       <Router>
-        <Login path="/" />
-        <PrivateRoute as={NewsFeed} path="/news-feed" />
-        <PrivateRoute as={Profile} path="/profile/:name" />
+        <Login path="/login" />
+        <PrivateRoute as={Root} path="/">
+          <PrivateRoute as={NewsFeed} path="/news-feed" />
+          <PrivateRoute as={Profile} path=":name" />
+        </PrivateRoute>
       </Router>
     </div>
   );

@@ -4,7 +4,6 @@ import { RouteComponentProps } from "@reach/router";
 import { loadPosts, getAllPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import { loadLikes } from "../store/likes";
-import NavBar from "./common/navBar";
 import Post from "./post";
 import PostCard from "./postCard";
 
@@ -23,7 +22,6 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
 
   return (
     <>
-      <NavBar />
       <Post />
       <PostCard posts={posts} images={images} />
     </>

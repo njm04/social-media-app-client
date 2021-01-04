@@ -104,7 +104,7 @@ const NavBar: React.FC<NavBarProps> = () => {
   const user: IAuthUser | null = useSelector(getUser);
   const userId = user && user._id ? user._id : "";
   const profilePicture = useSelector(getProfilePicture)(userId);
-  const [name] = useState<string>(user && user.firstName ? user.firstName : "");
+  const [name] = useState<string>(user && user.fullName ? user.fullName : "");
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
@@ -126,7 +126,7 @@ const NavBar: React.FC<NavBarProps> = () => {
       userData = user;
       profileNameUrl = getProfileName(userData);
     }
-    navigate(`/profile/${profileNameUrl}`, { state: { userData } });
+    navigate(`/${profileNameUrl}`, { state: { userData } });
     setAnchorEl(null);
     handleMobileMenuClose();
   };
@@ -247,7 +247,6 @@ const NavBar: React.FC<NavBarProps> = () => {
               {profilePicture ? (
                 <Avatar alt={profilePicture.name} src={profilePicture.url} />
               ) : (
-                // FIX: not working
                 <Avatar>{getInitials(name)}</Avatar>
               )}
               <Typography variant="h6" className={classes.userName}>
