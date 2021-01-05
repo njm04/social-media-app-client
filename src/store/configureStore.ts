@@ -6,6 +6,7 @@ const storeConfig = () =>
   configureStore({
     reducer,
     middleware: [...getDefaultMiddleware(), api],
+    devTools: process.env.NODE_ENV !== "production",
   });
 
 export default storeConfig;
