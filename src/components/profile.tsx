@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      marginTop: "80px",
     },
     paper: {
       // margin: `${theme.spacing(1)}px auto`,
@@ -82,7 +83,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="lg" style={{ marginTop: "7vh" }}>
+      <Container maxWidth="lg">
         <div className={classes.root}>
           <Grid container spacing={1}>
             <Grid item xs={12}>

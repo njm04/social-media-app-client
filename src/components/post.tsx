@@ -7,7 +7,7 @@ import PostField from "./common/postField";
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
-    marginTop: "8vh",
+    marginTop: "80px",
   },
   bullet: {
     display: "inline-block",
