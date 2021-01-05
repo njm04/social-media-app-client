@@ -104,3 +104,11 @@ export const getProfilePicture = createSelector(
         users.find((user: IUser) => user._id === userId)?.profilePicture
     )
 );
+
+export const getUser = createSelector(
+  (state: any) => state.entities.users.list,
+  (users: IUser[]) =>
+    memoize((userId: string) =>
+      users.find((user: IUser) => user._id === userId)
+    )
+);
