@@ -243,7 +243,11 @@ const NavBar: React.FC<NavBarProps> = () => {
           </div>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
+            <IconButton
+              aria-label="show 4 new mails"
+              color="inherit"
+              onClick={handleProfileOpen}
+            >
               {profilePicture ? (
                 <Avatar alt={profilePicture.name} src={profilePicture.url} />
               ) : (
