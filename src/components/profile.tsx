@@ -20,6 +20,7 @@ import { getInitials } from "../utils/utils";
 import EditPostModal from "./editPostModal";
 import PostCard from "./common/postCards";
 import EditProfileModal from "./editProfileModal";
+import PostField from "./common/postField";
 
 export interface ProfileProps {
   location: any;
@@ -82,11 +83,8 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     <>
       <CssBaseline />
       <Container maxWidth="lg" style={{ marginTop: "7vh" }}>
-        <div
-          className={classes.root}
-          style={{ backgroundColor: "#cfe8fc", height: "100vh" }}
-        >
-          <Grid container spacing={3}>
+        <div className={classes.root}>
+          <Grid container spacing={1}>
             <Grid item xs={12}>
               <Box
                 bgcolor="secondary.main"
@@ -126,6 +124,9 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                   </Button>
                 </Box>
               </Paper>
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <PostField />
             </Grid>
             {/* <Grid item xs={12} sm={6}>
               <Paper className={classes.paper}>xs=12 sm=6</Paper>
