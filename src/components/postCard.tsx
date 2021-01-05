@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { orderBy } from "lodash";
+import { navigate } from "@reach/router";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
@@ -16,6 +17,8 @@ import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
+import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
 import { getInitials } from "./../utils/utils";
 import {
   IPost,
@@ -30,9 +33,9 @@ import {
 } from "../store/comments";
 import { addLike } from "../store/likes";
 import { IImage } from "../store/images";
-import { getUser, IAuthUser } from "../store/auth";
-import { getDate } from "../utils/utils";
-import { getProfilePicture } from "../store/users";
+import { getUser as userAuth, IAuthUser } from "../store/auth";
+import { getDate, getProfileName } from "../utils/utils";
+import { getProfilePicture, getUser } from "../store/users";
 import Comment from "./comment";
 import ImageUploadGrid from "./imageUploadGrid";
 import PostMenu from "./common/postMenu";
@@ -71,6 +74,9 @@ const useStyles = makeStyles((theme: Theme) =>
     commentsCount: {
       borderBottom: "1px solid",
     },
+    link: {
+      cursor: "pointer",
+    },
   })
 );
 
@@ -85,7 +91,8 @@ const PostCard: React.FC<PostCardProps> = ({
 }: PostCardProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const user: IAuthUser | null = useSelector(getUser);
+  const user: IAuthUser | null = useSelector(userAuth);
+  const userProfile = useSelector(getUser);
   const profPicSelector = useSelector(getProfilePicture);
   const isFailed = useSelector(didCommentFailed);
   const [show, setShow] = useState(false);
@@ -100,6 +107,17 @@ const PostCard: React.FC<PostCardProps> = ({
       if (!isFailed) dispatch(postCommentIncremented({ post }));
       setComment("");
     }
+  };
+
+  const handleProfileOpen = (userId: string) => {
+    const user = userProfile(userId);
+    let userData: object = {};
+    let profileNameUrl: string = "";
+    if (user) {
+      userData = user;
+      profileNameUrl = getProfileName(userData);
+    }
+    navigate(`/${profileNameUrl}`, { state: { userData } });
   };
 
   const handleLike = (postId: string) => {
@@ -154,9 +172,13 @@ const PostCard: React.FC<PostCardProps> = ({
   const profilePicture = (userId: string, firstName: string) => {
     const profPic = profPicSelector(userId);
     return profPic ? (
-      <Avatar alt={profPic.name} src={profPic.url} />
+      <IconButton color="inherit">
+        <Avatar alt={profPic.name} src={profPic.url} />
+      </IconButton>
     ) : (
-      <Avatar>{getInitials(firstName)}</Avatar>
+      <IconButton color="inherit" onClick={() => handleProfileOpen(userId)}>
+        <Avatar>{getInitials(firstName)}</Avatar>
+      </IconButton>
     );
   };
 
@@ -174,7 +196,12 @@ const PostCard: React.FC<PostCardProps> = ({
                     {profilePicture(item.postedBy._id, item.postedBy.fullName)}
                   </Grid>
                   <Grid item xs={12}>
-                    <Typography>{item.postedBy.fullName}</Typography>
+                    <Typography
+                      className={classes.link}
+                      onClick={() => handleProfileOpen(item.postedBy._id)}
+                    >
+                      <Link color="inherit">{item.postedBy.fullName}</Link>
+                    </Typography>
                     <Typography variant="caption" display="block" gutterBottom>
                       {getDate(item.createdAt)}
                     </Typography>
