@@ -189,7 +189,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         fullWidth
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Edit Post
+          Edit Profile
         </DialogTitle>
         <DialogContent dividers>
           <Grid container spacing={3}>
