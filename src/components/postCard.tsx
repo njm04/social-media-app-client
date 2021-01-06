@@ -174,88 +174,86 @@ const PostCard: React.FC<PostCardProps> = ({
         <Box mt={2} bgcolor="background.paper" key={item._id}>
           <Card className={classes.root}>
             <CardContent className={classes.postContent}>
-              <Paper className={classes.paper}>
-                <Grid container wrap="nowrap" spacing={2}>
-                  <Grid item>
-                    <ProfileAvatar
-                      userId={item.postedBy._id}
-                      fullName={item.postedBy.fullName}
-                      handleProfileOpen={handleProfileOpen}
+              <Grid container wrap="nowrap" spacing={2}>
+                <Grid item>
+                  <ProfileAvatar
+                    userId={item.postedBy._id}
+                    fullName={item.postedBy.fullName}
+                    handleProfileOpen={handleProfileOpen}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography
+                    className={classes.link}
+                    onClick={() => handleProfileOpen(item.postedBy._id)}
+                  >
+                    <Link color="inherit">{item.postedBy.fullName}</Link>
+                  </Typography>
+                  <Typography variant="caption" display="block" gutterBottom>
+                    {getDate(item.createdAt)}
+                  </Typography>
+                </Grid>
+                <Grid item container justify="flex-end" xs={6}>
+                  {user && user._id === item.postedBy._id ? (
+                    <PostMenu
+                      postId={item._id}
+                      setOpenModal={setOpenModal}
+                      setId={setId}
                     />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography
-                      className={classes.link}
-                      onClick={() => handleProfileOpen(item.postedBy._id)}
-                    >
-                      <Link color="inherit">{item.postedBy.fullName}</Link>
-                    </Typography>
-                    <Typography variant="caption" display="block" gutterBottom>
-                      {getDate(item.createdAt)}
-                    </Typography>
-                  </Grid>
-                  <Grid item container justify="flex-end" xs={6}>
-                    {user && user._id === item.postedBy._id ? (
-                      <PostMenu
-                        postId={item._id}
-                        setOpenModal={setOpenModal}
-                        setId={setId}
-                      />
-                    ) : null}
-                  </Grid>
+                  ) : null}
                 </Grid>
-                <Grid item xs={12}>
-                  <Box px={7} py={2}>
-                    <Typography>{item.post}</Typography>
-                    {displayPostImage(item.postImages)}
-                  </Box>
+              </Grid>
+              <Grid item xs={12}>
+                <Box px={7} py={2}>
+                  <Typography>{item.post}</Typography>
+                  {displayPostImage(item.postImages)}
+                </Box>
+              </Grid>
+              <Grid item xs={12}>
+                {getLikes(item.likes)}
+                {getCommentsCount(item.commentCount)}
+                <Divider variant="fullWidth" component="hr" />
+              </Grid>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <Button
+                    color="default"
+                    fullWidth
+                    startIcon={<ThumbUpAltIcon />}
+                    onClick={() => handleLike(item._id)}
+                  >
+                    Like
+                  </Button>
                 </Grid>
-                <Grid item xs={12}>
-                  {getLikes(item.likes)}
-                  {getCommentsCount(item.commentCount)}
-                  <Divider variant="fullWidth" component="hr" />
+                <Grid item xs={6}>
+                  <Button
+                    color="default"
+                    fullWidth
+                    startIcon={<ChatBubbleIcon />}
+                    onClick={(e) => onClickShowComments(e, item._id)}
+                  >
+                    Comment
+                  </Button>
                 </Grid>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Button
-                      color="default"
+              </Grid>
+              <Grid item xs={12}>
+                {/* does item._id === id have another alternative way?*/}
+                {show && item._id === id && (
+                  <>
+                    <TextField
+                      id={item._id}
+                      value={comment}
+                      variant="outlined"
                       fullWidth
-                      startIcon={<ThumbUpAltIcon />}
-                      onClick={() => handleLike(item._id)}
-                    >
-                      Like
-                    </Button>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Button
-                      color="default"
-                      fullWidth
-                      startIcon={<ChatBubbleIcon />}
-                      onClick={(e) => onClickShowComments(e, item._id)}
-                    >
-                      Comment
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  {/* does item._id === id have another alternative way?*/}
-                  {show && item._id === id && (
-                    <>
-                      <TextField
-                        id={item._id}
-                        value={comment}
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        placeholder="Write a comment..."
-                        onKeyDown={(e) => onKeyEnter(e, item._id)}
-                        onChange={handleComment}
-                      />
-                      <Comment postId={item._id} key={item._id} />
-                    </>
-                  )}
-                </Grid>
-              </Paper>
+                      size="small"
+                      placeholder="Write a comment..."
+                      onKeyDown={(e) => onKeyEnter(e, item._id)}
+                      onChange={handleComment}
+                    />
+                    <Comment postId={item._id} key={item._id} />
+                  </>
+                )}
+              </Grid>
             </CardContent>
           </Card>
         </Box>

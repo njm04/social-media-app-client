@@ -156,7 +156,6 @@ const PostCard: React.FC<PostCardProps> = ({
         <Box mt={2} bgcolor="background.paper" key={post._id}>
           <Card className={classes.card}>
             <CardContent className={classes.postContent}>
-              {/* <Paper className={classes.paper}> */}
               <Grid container wrap="nowrap" spacing={2}>
                 <Grid item>{profilePicture(post.postedBy.fullName)}</Grid>
                 <Grid item xs={12}>
@@ -224,7 +223,6 @@ const PostCard: React.FC<PostCardProps> = ({
                   </>
                 )}
               </Grid>
-              {/* </Paper> */}
             </CardContent>
           </Card>
         </Box>
