@@ -150,12 +150,12 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
               <input
                 accept="image/*"
                 className={classes.input}
-                id="contained-button-file"
+                id="post-uploads"
                 multiple
                 type="file"
                 onChange={handleImageUpload}
               />
-              <label htmlFor="contained-button-file">
+              <label htmlFor="post-uploads">
                 <Button
                   // variant="contained"
                   color="primary"
