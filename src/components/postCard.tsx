@@ -195,11 +195,13 @@ const PostCard: React.FC<PostCardProps> = ({
                     </Typography>
                   </Grid>
                   <Grid item container justify="flex-end" xs={6}>
-                    <PostMenu
-                      postId={item._id}
-                      setOpenModal={setOpenModal}
-                      setId={setId}
-                    />
+                    {user && user._id === item.postedBy._id ? (
+                      <PostMenu
+                        postId={item._id}
+                        setOpenModal={setOpenModal}
+                        setId={setId}
+                      />
+                    ) : null}
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
