@@ -77,7 +77,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   }, [dispatch]);
 
   const handleEditProfile = () => {
-    setOpenModal(true);
+    setopenEditProfileModal(true);
   };
 
   return (
