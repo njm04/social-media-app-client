@@ -19,11 +19,11 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import Avatar from "@material-ui/core/Avatar";
 import TextField from "@material-ui/core/TextField";
-import { getPost, IPostImages, editPost, IPost } from "../store/posts";
+import { getPost, IPostImages, editPost } from "../store/posts";
+import { getDate } from "../utils/utils";
 import ImageUploadGrid from "./imageUploadGrid";
-import { getInitials, getDate } from "../utils/utils";
+import ProfileAvatar from "./common/profileAvatar";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -161,7 +161,10 @@ const EditPostModal: React.FC<EditPostModalProps> = ({
         <Paper className={classes.paper}>
           <Grid container wrap="nowrap" spacing={2}>
             <Grid item>
-              <Avatar>{getInitials(post.postedBy.firstName)}</Avatar>
+              <ProfileAvatar
+                userId={post.postedBy._id}
+                fullName={post.postedBy.fullName}
+              />
             </Grid>
             <Grid item xs={12}>
               <Typography>{post.postedBy.fullName}</Typography>

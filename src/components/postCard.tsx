@@ -12,14 +12,11 @@ import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
-import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
-import { getInitials } from "./../utils/utils";
 import {
   IPost,
   IPostImages,
@@ -35,11 +32,12 @@ import { addLike } from "../store/likes";
 import { IImage } from "../store/images";
 import { getUser as userAuth, IAuthUser } from "../store/auth";
 import { getDate, getProfileName } from "../utils/utils";
-import { getProfilePicture, getUser } from "../store/users";
+import { getUser } from "../store/users";
 import Comment from "./comment";
 import ImageUploadGrid from "./imageUploadGrid";
 import PostMenu from "./common/postMenu";
 import EditPostModal from "./editPostModal";
+import ProfileAvatar from "./common/profileAvatar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -93,7 +91,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(userAuth);
   const userProfile = useSelector(getUser);
-  const profPicSelector = useSelector(getProfilePicture);
   const isFailed = useSelector(didCommentFailed);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
@@ -169,19 +166,6 @@ const PostCard: React.FC<PostCardProps> = ({
     return;
   };
 
-  const profilePicture = (userId: string, firstName: string) => {
-    const profPic = profPicSelector(userId);
-    return profPic ? (
-      <IconButton color="inherit">
-        <Avatar alt={profPic.name} src={profPic.url} />
-      </IconButton>
-    ) : (
-      <IconButton color="inherit" onClick={() => handleProfileOpen(userId)}>
-        <Avatar>{getInitials(firstName)}</Avatar>
-      </IconButton>
-    );
-  };
-
   const postCards = () => {
     const sorted = orderBy(posts, ["createdAt"], ["desc"]);
 
@@ -193,7 +177,11 @@ const PostCard: React.FC<PostCardProps> = ({
               <Paper className={classes.paper}>
                 <Grid container wrap="nowrap" spacing={2}>
                   <Grid item>
-                    {profilePicture(item.postedBy._id, item.postedBy.fullName)}
+                    <ProfileAvatar
+                      userId={item.postedBy._id}
+                      fullName={item.postedBy.fullName}
+                      handleProfileOpen={handleProfileOpen}
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <Typography
