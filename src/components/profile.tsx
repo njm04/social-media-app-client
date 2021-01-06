@@ -11,8 +11,15 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
 import { getUserPosts, loadPosts } from "../store/posts";
-import { loadImages, getImages } from "../store/images";
+import {
+  loadImages,
+  getImages,
+  getUserCoverPhoto,
+  IImageData,
+} from "../store/images";
 import { getProfilePicture } from "../store/users";
 import { loadUsers } from "../store/users";
 import { loadLikes } from "../store/likes";
@@ -38,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
     },
     avatar: {
-      marginTop: 140,
+      marginTop: 235,
       width: 180,
       height: 180,
     },
@@ -54,6 +61,9 @@ const useStyles = makeStyles((theme: Theme) =>
     commentsCount: {
       borderBottom: "1px solid",
     },
+    gridList: {
+      width: 918,
+    },
   })
 );
 
@@ -65,6 +75,8 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const userId = user._id;
   const userPosts = useSelector(getUserPosts)(userId);
   const profilePicture = useSelector(getProfilePicture)(userId);
+  const coverPhoto = useSelector(getUserCoverPhoto)(userId);
+  const [cover, setCover] = useState<IImageData>();
   const [openModal, setOpenModal] = useState(false);
   const [openEditProfileModal, setopenEditProfileModal] = useState(false);
   const [id, setPostId] = useState("");
@@ -77,13 +89,30 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   }, [dispatch]);
 
   const handleEditProfile = () => {
+    if (coverPhoto) setCover(coverPhoto.imageData[0]);
     setopenEditProfileModal(true);
+  };
+
+  const displayCoverPhoto = () => {
+    if (coverPhoto) {
+      const cover = coverPhoto.imageData[0];
+
+      return (
+        <Box position="absolute" display="flex">
+          <GridList cellHeight={400} className={classes.gridList} cols={1}>
+            <GridListTile>
+              <img alt={cover.name} src={cover.url} />
+            </GridListTile>
+          </GridList>
+        </Box>
+      );
+    }
   };
 
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Container maxWidth="md">
         <div className={classes.root}>
           <Grid container spacing={1}>
             <Grid item xs={12}>
@@ -93,20 +122,23 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                 style={{
                   justifyContent: "center",
                   display: "flex",
-                  height: "300px",
+                  height: "400px",
                 }}
               >
-                {profilePicture ? (
-                  <Avatar
-                    className={classes.avatar}
-                    alt={profilePicture.name}
-                    src={profilePicture.url}
-                  />
-                ) : (
-                  <Avatar className={classes.avatar}>
-                    {getInitials(user.fullName)}
-                  </Avatar>
-                )}
+                {displayCoverPhoto()}
+                <Box zIndex="modal" position="absolute">
+                  {profilePicture ? (
+                    <Avatar
+                      className={classes.avatar}
+                      alt={profilePicture.name}
+                      src={profilePicture.url}
+                    />
+                  ) : (
+                    <Avatar className={classes.avatar}>
+                      {getInitials(user.fullName)}
+                    </Avatar>
+                  )}
+                </Box>
               </Box>
             </Grid>
             <Grid item xs={12}>
@@ -150,6 +182,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
         setopenEditProfileModal={setopenEditProfileModal}
         userId={userId}
         profImage={profilePicture ? profilePicture : {}}
+        cover={cover ? cover : {}}
       />
     </>
   );

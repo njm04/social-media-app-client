@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import { isEmpty } from "lodash";
 import {
   createStyles,
   Theme,
@@ -7,6 +8,7 @@ import {
   WithStyles,
   makeStyles,
 } from "@material-ui/core/styles";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
@@ -17,10 +19,13 @@ import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
+import GridList from "@material-ui/core/GridList";
+import GridListTile from "@material-ui/core/GridListTile";
 import Box from "@material-ui/core/Box";
 import PhotoIcon from "@material-ui/icons/Photo";
 import { storage } from "../firebase.config";
 import { updateUserProfPic, IProfPic } from "../store/users";
+import { addImages, IImageData } from "../store/images";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,6 +69,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     input: {
       display: "none",
+    },
+    box: {
+      justifyContent: "center",
+    },
+    div: {
+      display: "flex",
+    },
+    gridList: {
+      width: 700,
     },
   })
 );
@@ -109,38 +123,44 @@ export interface EditProfileModalProps {
   open: boolean;
   userId: string;
   profImage: IProfPic;
+  cover: IImageData;
   setopenEditProfileModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-type ImageData = {
-  name: string;
-  url: string;
-};
 
 const EditProfileModal: React.FC<EditProfileModalProps> = ({
   open,
   userId,
   profImage,
+  cover,
   setopenEditProfileModal,
 }: EditProfileModalProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [profilePicture, setProfilePicture] = useState<IProfPic>();
   const [imageData, setImageData] = useState<object[]>();
+  const [coverPhoto, setCoverPhoto] = useState<IImageData>(cover);
 
   const handleClose = () => {
     setopenEditProfileModal(false);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    category: string
+  ) => {
     const imageInfo: object[] = [];
     if (e.target.files !== null) {
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
-        const data: ImageData = await uploadImage(file);
-        setProfilePicture(data);
-        dispatch(updateUserProfPic(userId, data));
-        imageInfo.push(data);
+        const data: IImageData = await uploadImage(file);
+        if (category === "avatar") {
+          setProfilePicture(data);
+          dispatch(updateUserProfPic(userId, data));
+          imageInfo.push(data);
+        } else {
+          setCoverPhoto(data);
+          dispatch(addImages({ userId, imageData: data }));
+        }
       }
     }
     setImageData(imageInfo);
@@ -148,9 +168,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
   const uploadImage = (
     imageFile: Blob | Uint8Array | ArrayBuffer
-  ): Promise<ImageData> => {
+  ): Promise<IImageData> => {
     return new Promise((resolve, reject) => {
-      let currentImageName = `firebase-image-user-avatar-${Date.now()}-${userId}`;
+      let currentImageName = `firebase-image-${Date.now()}-${userId}`;
       let uploadImage = storage
         .ref(`images/${currentImageName}`)
         .put(imageFile);
@@ -202,11 +222,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                   <input
                     accept="image/*"
                     className={classes.input}
-                    id="contained-button-file"
+                    id="avatar-upload"
                     type="file"
-                    onChange={handleImageUpload}
+                    onChange={(e) => handleImageUpload(e, "avatar")}
                   />
-                  <label htmlFor="contained-button-file">
+                  <label htmlFor="avatar-upload">
                     <Button
                       // variant="contained"
                       color="primary"
@@ -221,17 +241,64 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               </Grid>
               <Box
                 bgcolor="secondary.main"
+                p={5}
                 display="flex"
-                style={{
-                  justifyContent: "center",
-                  display: "flex",
-                }}
+                className={classes.box}
               >
                 <Avatar
                   className={classes.avatar}
                   alt={profImage.name}
                   src={profImage.url}
                 />
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container wrap="nowrap" spacing={2}>
+                <Grid item container justify="flex-start" xs={6}>
+                  <Typography variant="h5">Cover Photo</Typography>
+                </Grid>
+                <Grid item container justify="flex-end" xs={6}>
+                  <input
+                    accept="image/*"
+                    className={classes.input}
+                    id="cover-upload"
+                    type="file"
+                    onChange={(e) => handleImageUpload(e, "cover")}
+                  />
+                  <label htmlFor="cover-upload">
+                    <Button
+                      // variant="contained"
+                      color="primary"
+                      component="span"
+                      size="small"
+                      startIcon={<PhotoIcon />}
+                    >
+                      Photo
+                    </Button>
+                  </label>
+                </Grid>
+              </Grid>
+              <Box
+                bgcolor="secondary.main"
+                p={5}
+                display="flex"
+                className={classes.box}
+              >
+                {!isEmpty(coverPhoto) ? (
+                  // <div className={classes.div}>
+                  <GridList
+                    cellHeight={300}
+                    className={classes.gridList}
+                    cols={1}
+                  >
+                    <GridListTile>
+                      <img alt={coverPhoto.name} src={coverPhoto.url} />
+                    </GridListTile>
+                  </GridList>
+                ) : (
+                  // </div>
+                  <AccountBoxIcon className={classes.avatar} />
+                )}
               </Box>
             </Grid>
           </Grid>
