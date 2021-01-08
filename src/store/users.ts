@@ -31,6 +31,7 @@ export interface IUser {
   createdAt: string;
   updatedAt: string;
   profilePicture: IProfPic;
+  coverPhoto: IProfPic;
 }
 
 interface UsersSliceState {
@@ -64,6 +65,13 @@ const slice = createSlice({
       users.loading = false;
       toast.dark("You've updated your profile picture.");
     },
+    userCoverPhotoUpdated: (users, action: PayloadAction<IUser>) => {
+      const { _id } = action.payload;
+      const index = users.list.findIndex((user: IUser) => user._id === _id);
+      users.list[index] = action.payload;
+      users.loading = false;
+      toast.dark("You've updated your cover photo.");
+    },
   },
 });
 
@@ -72,6 +80,7 @@ const {
   usersFailed,
   usersReceived,
   userProfPicUpdated,
+  userCoverPhotoUpdated,
 } = slice.actions;
 export default slice.reducer;
 
@@ -96,12 +105,32 @@ export const updateUserProfPic = (userId: string, data: IProfPic) => {
   });
 };
 
+export const updateUserCoverPhoto = (userId: string, data: IProfPic) => {
+  return apiCallBegan({
+    url: `${url}/update-cover-photo/${userId}`,
+    method: "PATCH",
+    data: data,
+    onStart: usersRequested.type,
+    onSuccess: userCoverPhotoUpdated.type,
+    onError: usersFailed.type,
+  });
+};
+
 export const getProfilePicture = createSelector(
   (state: any) => state.entities.users.list,
   (users: IUser[]) =>
     memoize(
       (userId: string) =>
         users.find((user: IUser) => user._id === userId)?.profilePicture
+    )
+);
+
+export const getCoverPhoto = createSelector(
+  (state: any) => state.entities.users.list,
+  (users: IUser[]) =>
+    memoize(
+      (userId: string) =>
+        users.find((user: IUser) => user._id === userId)?.coverPhoto
     )
 );
 
