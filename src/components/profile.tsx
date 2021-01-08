@@ -20,7 +20,7 @@ import {
   getUserCoverPhoto,
   IImageData,
 } from "../store/images";
-import { getProfilePicture } from "../store/users";
+import { getProfilePicture, getCoverPhoto } from "../store/users";
 import { loadUsers } from "../store/users";
 import { loadLikes } from "../store/likes";
 import { getInitials } from "../utils/utils";
@@ -48,6 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: 235,
       width: 180,
       height: 180,
+      border: "4px solid black",
     },
     card: {
       minWidth: 275,
@@ -75,8 +76,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const userId = user._id;
   const userPosts = useSelector(getUserPosts)(userId);
   const profilePicture = useSelector(getProfilePicture)(userId);
-  const coverPhoto = useSelector(getUserCoverPhoto)(userId);
-  const [cover, setCover] = useState<IImageData>();
+  const coverPhoto = useSelector(getCoverPhoto)(userId);
   const [openModal, setOpenModal] = useState(false);
   const [openEditProfileModal, setopenEditProfileModal] = useState(false);
   const [id, setPostId] = useState("");
@@ -89,19 +89,16 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   }, [dispatch]);
 
   const handleEditProfile = () => {
-    if (coverPhoto) setCover(coverPhoto.imageData[0]);
     setopenEditProfileModal(true);
   };
 
   const displayCoverPhoto = () => {
     if (coverPhoto) {
-      const cover = coverPhoto.imageData[0];
-
       return (
         <Box position="absolute" display="flex">
           <GridList cellHeight={400} className={classes.gridList} cols={1}>
             <GridListTile>
-              <img alt={cover.name} src={cover.url} />
+              <img alt={coverPhoto.name} src={coverPhoto.url} />
             </GridListTile>
           </GridList>
         </Box>
@@ -182,7 +179,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
         setopenEditProfileModal={setopenEditProfileModal}
         userId={userId}
         profImage={profilePicture ? profilePicture : {}}
-        cover={cover ? cover : {}}
+        cover={coverPhoto ? coverPhoto : {}}
       />
     </>
   );

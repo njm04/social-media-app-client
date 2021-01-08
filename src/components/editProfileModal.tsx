@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 import {
   createStyles,
@@ -24,8 +24,12 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Box from "@material-ui/core/Box";
 import PhotoIcon from "@material-ui/icons/Photo";
 import { storage } from "../firebase.config";
-import { updateUserProfPic, IProfPic } from "../store/users";
-import { addImages, IImageData } from "../store/images";
+import {
+  updateUserProfPic,
+  updateUserCoverPhoto,
+  IProfPic,
+} from "../store/users";
+import { IImageData } from "../store/images";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -123,7 +127,7 @@ export interface EditProfileModalProps {
   open: boolean;
   userId: string;
   profImage: IProfPic;
-  cover: IImageData;
+  cover?: IImageData;
   setopenEditProfileModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -138,7 +142,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const dispatch = useDispatch();
   const [profilePicture, setProfilePicture] = useState<IProfPic>();
   const [imageData, setImageData] = useState<object[]>();
-  const [coverPhoto, setCoverPhoto] = useState<IImageData>(cover);
 
   const handleClose = () => {
     setopenEditProfileModal(false);
@@ -158,8 +161,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           dispatch(updateUserProfPic(userId, data));
           imageInfo.push(data);
         } else {
-          setCoverPhoto(data);
-          dispatch(addImages({ userId, imageData: data }));
+          dispatch(updateUserCoverPhoto(userId, data));
         }
       }
     }
@@ -284,7 +286,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 display="flex"
                 className={classes.box}
               >
-                {!isEmpty(coverPhoto) ? (
+                {cover ? (
                   // <div className={classes.div}>
                   <GridList
                     cellHeight={300}
@@ -292,7 +294,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                     cols={1}
                   >
                     <GridListTile>
-                      <img alt={coverPhoto.name} src={coverPhoto.url} />
+                      <img alt={cover.name} src={cover.url} />
                     </GridListTile>
                   </GridList>
                 ) : (
