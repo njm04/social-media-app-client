@@ -50,8 +50,13 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
   const classes = useStyles();
   const user: IAuthUser | null = useSelector(getUser);
   const [post, setPost] = useState("");
-  const [images, setImages] = useState<IImageData[]>();
-  const [imageData, setImageData] = useState<object[]>();
+  const [images, setImages] = useState<IImageData[]>([]);
+  const [imageData, setImageData] = useState<object[]>([]);
+
+  const isDisabled = () => {
+    if (!post && imageData.length === 0) return true;
+    return false;
+  };
 
   const handleChangePost = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPost(e.target.value);
@@ -60,6 +65,11 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
     e.preventDefault();
     const postedBy: string = user && user._id ? user._id : "";
     if (post !== "") {
+      dispatch(createPost({ postedBy, post, imageData }));
+      setPost("");
+      setImages([]);
+      setImageData([]);
+    } else if (imageData !== undefined) {
       dispatch(createPost({ postedBy, post, imageData }));
       setPost("");
       setImages([]);
@@ -174,6 +184,7 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
                 className={classes.button}
                 size="small"
                 onClick={(e) => handleSubmit(e)}
+                disabled={isDisabled()}
               >
                 Post
               </Button>

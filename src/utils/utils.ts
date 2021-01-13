@@ -39,7 +39,7 @@ export const getDate = (date: string) => {
 
 export const deleteUploadedImages = (images: IPostImages[]) => {
   const deleteRef = storage.ref();
-  if (images.length > 0) {
+  if (images && images.length > 0) {
     images.forEach((image: IPostImages) => {
       // Create a reference to the file to delete
       var deleteImage = deleteRef.child(`images/${image.name}`);
