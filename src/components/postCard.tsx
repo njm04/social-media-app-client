@@ -10,27 +10,23 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import Link from "@material-ui/core/Link";
-import {
-  IPost,
-  IPostImages,
-  postCommentIncremented,
-  likePost,
-} from "../store/posts";
+import { postCommentIncremented, likePost } from "../store/posts";
+import { IPost, IPostImages } from "../interfaces/posts";
 import {
   loadComments,
   createComment,
   didCommentFailed,
 } from "../store/comments";
 import { addLike } from "../store/likes";
-import { IImage } from "../store/images";
-import { getUser as userAuth, IAuthUser } from "../store/auth";
+import { IImage } from "../interfaces/images";
+import { getUser as userAuth } from "../store/auth";
+import { IAuthUser } from "../interfaces/auth";
 import { getDate, getProfileName } from "../utils/utils";
 import { getUser } from "../store/users";
 import Comment from "./comment";

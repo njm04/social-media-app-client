@@ -3,36 +3,10 @@ import { memoize } from "lodash";
 import { toast } from "react-toastify";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { IUser } from "../interfaces/users";
+import { IProfPic } from "../interfaces/profPic";
 
 const url = "/users";
-
-export interface IProfPic {
-  name?: string;
-  url?: string;
-}
-
-export interface IUser {
-  addressTwo: string;
-  status: string;
-  friends: string[];
-  isDeleted: false;
-  _id: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  birthDate: string;
-  gender: string;
-  contactNumber: string;
-  address: string;
-  state: string;
-  city: string;
-  zip: string;
-  createdAt: string;
-  updatedAt: string;
-  profilePicture: IProfPic;
-  coverPhoto: IProfPic;
-}
 
 interface UsersSliceState {
   list: IUser[];

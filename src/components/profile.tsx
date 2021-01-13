@@ -14,12 +14,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import { getUserPosts, loadPosts } from "../store/posts";
-import {
-  loadImages,
-  getImages,
-  getUserCoverPhoto,
-  IImageData,
-} from "../store/images";
+import { loadImages, getImages } from "../store/images";
 import { getProfilePicture, getCoverPhoto } from "../store/users";
 import { loadUsers } from "../store/users";
 import { loadLikes } from "../store/likes";

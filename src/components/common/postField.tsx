@@ -10,8 +10,9 @@ import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import { createPost } from "../../store/posts";
-import { getUser, IAuthUser } from "../../store/auth";
-import { IImageData } from "../../store/images";
+import { getUser } from "../../store/auth";
+import { IAuthUser } from "../../interfaces/auth";
+import { IImageData } from "../../interfaces/images";
 import { storage } from "../../firebase.config";
 import ImageUploadGrid from "./../imageUploadGrid";
 

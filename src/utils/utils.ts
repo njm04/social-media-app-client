@@ -1,7 +1,7 @@
 import moment from "moment";
 import { storage } from "../firebase.config";
-import { IPostImages } from "../store/posts";
-import { IAuthUser } from "../store/auth";
+import { IPostImages } from "../interfaces/posts";
+import { IAuthUser } from "../interfaces/auth";
 
 export const getInitials = (name: string) => {
   if (name)

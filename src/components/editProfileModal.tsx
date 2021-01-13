@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { isEmpty } from "lodash";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   createStyles,
   Theme,
@@ -24,12 +23,9 @@ import GridListTile from "@material-ui/core/GridListTile";
 import Box from "@material-ui/core/Box";
 import PhotoIcon from "@material-ui/icons/Photo";
 import { storage } from "../firebase.config";
-import {
-  updateUserProfPic,
-  updateUserCoverPhoto,
-  IProfPic,
-} from "../store/users";
-import { IImageData } from "../store/images";
+import { updateUserProfPic, updateUserCoverPhoto } from "../store/users";
+import { IProfPic } from "../interfaces/profPic";
+import { IImageData } from "../interfaces/images";
 
 const styles = (theme: Theme) =>
   createStyles({

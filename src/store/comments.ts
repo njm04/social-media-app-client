@@ -2,22 +2,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { IComment } from "../interfaces/comments";
 
 const url = "/comments";
-
-interface ICreatedBy {
-  _id: string;
-  firstName: string;
-  lastName: string;
-}
-
-export interface IComment {
-  _id: string;
-  post: string;
-  comment: string;
-  createdBy: ICreatedBy;
-  createdAt: string;
-}
 
 interface CommentsSliceState {
   list: IComment[];

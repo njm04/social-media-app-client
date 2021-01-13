@@ -1,14 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { ICommentsCount } from "../interfaces/commentCount";
 
 const url = "/comments";
-
-export interface ICommentsCount {
-  _id?: string;
-  postId?: string;
-  count?: number;
-}
 
 interface CommentsSliceState {
   commentsCount: ICommentsCount;

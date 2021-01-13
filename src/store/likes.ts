@@ -2,15 +2,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { ILike } from "../interfaces/likes";
 
 const url = "/likes";
-
-interface ILike {
-  likesCount: number;
-  _id: string;
-  userId: string;
-  postId: string;
-}
 
 interface LikesSliceState {
   list: ILike[];

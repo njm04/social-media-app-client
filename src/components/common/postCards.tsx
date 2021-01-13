@@ -13,18 +13,14 @@ import Divider from "@material-ui/core/Divider";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import TextField from "@material-ui/core/TextField";
-import {
-  IPost,
-  IPostImages,
-  postCommentIncremented,
-  likePost,
-} from "../../store/posts";
+import { postCommentIncremented, likePost } from "../../store/posts";
+import { IPost, IPostImages } from "../../interfaces/posts";
 import {
   loadComments,
   createComment,
   didCommentFailed,
 } from "../../store/comments";
-import { IImage } from "../../store/images";
+import { IImage } from "../../interfaces/images";
 import { addLike } from "../../store/likes";
 import { getInitials, getDate } from "../../utils/utils";
 import { getProfilePicture } from "../../store/users";

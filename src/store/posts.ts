@@ -4,31 +4,9 @@ import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 import { deleteUploadedImages } from "../utils/utils";
+import { IPost, IEditPost } from "../interfaces/posts";
 
 const url = "/posts";
-
-interface IPostedBy {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-}
-
-export interface IPostImages {
-  name: string;
-  url: string;
-}
-
-export interface IPost {
-  _id: string;
-  post: string;
-  postedBy: IPostedBy;
-  createdAt: string;
-  updatedAt: string;
-  commentCount: number;
-  likes: number;
-  postImages: IPostImages[];
-}
 
 interface PostsSliceState {
   list: IPost[];
@@ -145,11 +123,6 @@ export const deletePost = (id: string) => {
     onError: postsFailed.type,
   });
 };
-
-interface IEditPost {
-  id: string;
-  newPost: string;
-}
 
 export const editPost = (data: IEditPost) => {
   const { id } = data;

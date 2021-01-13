@@ -3,21 +3,22 @@ import { toast } from "react-toastify";
 import { memoize } from "lodash";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { IImage, IImageData } from "../interfaces/images";
 
 const url = "/images";
 
-export interface IImageData {
-  _id?: string;
-  name?: string;
-  url?: string;
-}
+// export interface IImageData {
+//   _id?: string;
+//   name?: string;
+//   url?: string;
+// }
 
-export interface IImage {
-  _id?: string;
-  postId?: string;
-  userId: string;
-  imageData: IImageData[];
-}
+// export interface IImage {
+//   _id?: string;
+//   postId?: string;
+//   userId: string;
+//   imageData: IImageData[];
+// }
 
 interface ImagesSliceState {
   list: IImage[];
