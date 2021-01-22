@@ -4,6 +4,11 @@ interface ICreatedBy {
   lastName: string;
 }
 
+export interface IEditComment {
+  id: string;
+  updatedComment: string;
+}
+
 export interface IComment {
   _id: string;
   post: string;

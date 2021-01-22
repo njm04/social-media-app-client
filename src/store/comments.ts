@@ -3,7 +3,7 @@ import { memoize } from "lodash";
 import { toast } from "react-toastify";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
-import { IComment } from "../interfaces/comments";
+import { IComment, IEditComment } from "../interfaces/comments";
 
 const url = "/comments";
 
@@ -50,6 +50,15 @@ const slice = createSlice({
       toast.dark("You've deleted your comment.");
       comments.loading = false;
     },
+    commentEdited: (comments, action: PayloadAction<IComment>) => {
+      const { _id } = action.payload;
+      const index = comments.list.findIndex(
+        (comment: any) => comment._id === _id
+      );
+      comments.list[index] = action.payload;
+      comments.loading = false;
+      toast.dark("You've updated your comment.");
+    },
   },
 });
 
@@ -59,6 +68,7 @@ const {
   commentsReceived,
   newCommentReceived,
   commentDeleted,
+  commentEdited,
 } = slice.actions;
 export default slice.reducer;
 
@@ -93,6 +103,18 @@ export const deleteComment = (id: string) => {
   });
 };
 
+export const editComment = (data: IEditComment) => {
+  const { id } = data;
+  return apiCallBegan({
+    url: `${url}/${id}`,
+    method: "PATCH",
+    data,
+    onStart: commentsRequested.type,
+    onSuccess: commentEdited.type,
+    onError: commentsFailed.type,
+  });
+};
+
 export const getComments = createSelector(
   (state: any) => state.entities.comments.list,
   (comments: IComment[]) =>
@@ -104,4 +126,12 @@ export const getComments = createSelector(
 export const didCommentFailed = createSelector(
   (state: any) => state.entities.comments,
   (comments: CommentsSliceState) => comments.isError
+);
+
+export const getSingleComment = createSelector(
+  (state: any) => state.entities.comments.list,
+  (comments: IComment[]) =>
+    memoize((id: string) => {
+      return comments.find((comment) => comment._id === id);
+    })
 );

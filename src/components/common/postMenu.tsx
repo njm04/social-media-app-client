@@ -71,6 +71,7 @@ const PostMenu: React.FC<PostMenuProps> = ({
 
   const handleEdit = () => {
     if (handleEditPost && postId) handleEditPost(postId);
+    if (setCommentId && commentId) setCommentId(commentId);
     setAnchorEl(null);
   };
 

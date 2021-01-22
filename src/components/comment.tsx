@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
+import { orderBy } from "lodash";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -10,7 +11,13 @@ import Divider from "@material-ui/core/Divider";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { getComments, deleteComment } from "../store/comments";
+import TextField from "@material-ui/core/TextField";
+import {
+  getComments,
+  deleteComment,
+  getSingleComment,
+  editComment,
+} from "../store/comments";
 import { IComment } from "../interfaces/comments";
 import { getInitials, getDate } from "../utils/utils";
 import PostMenu from "./common/postMenu";
@@ -41,17 +48,39 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const comments: IComment[] = useSelector(getComments)(postId);
+  const sorted = orderBy(comments, ["createdAt"], ["desc"]);
   const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState(false);
   const [commentId, setCommentId] = useState("");
+  const userComment = useSelector(getSingleComment)(commentId);
+  const [editUserComment, setEditUserComment] = useState("");
+
+  useEffect((): any => {
+    if (userComment) setEditUserComment(userComment.comment);
+  }, [userComment]);
+
+  const handleEditComment = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    commentId: string
+  ) => {
+    if (e.key === "Enter" && editUserComment !== "") {
+      dispatch(editComment({ id: commentId, updatedComment: editUserComment }));
+      setEditUserComment("");
+      setCommentId("");
+    }
+  };
 
   const handleDeleteComment = (id: string) => {
     dispatch(deleteComment(id));
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditUserComment(e.target.value);
+  };
+
   return (
     <>
       <List className={classes.root}>
-        {comments.map((comment) => {
+        {sorted.map((comment) => {
           return (
             <React.Fragment key={comment._id}>
               <ListItem alignItems="flex-start">
@@ -61,10 +90,30 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
                 <Grid container spacing={3}>
                   <Grid item xs={11}>
                     <Box px={1} py={1} className={classes.radius}>
-                      <ListItemText
-                        primary={comment.createdBy.firstName}
-                        secondary={
-                          <>
+                      {userComment ? (
+                        <>
+                          <Grid item xs={12}>
+                            <Typography>
+                              {comment.createdBy.firstName}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <TextField
+                              id="standard-basic"
+                              variant="outlined"
+                              fullWidth
+                              onChange={handleChange}
+                              onKeyDown={(e) =>
+                                handleEditComment(e, comment._id)
+                              }
+                              value={editUserComment}
+                            />
+                          </Grid>
+                        </>
+                      ) : (
+                        <ListItemText
+                          primary={comment.createdBy.firstName}
+                          secondary={
                             <Typography
                               component="span"
                               variant="body2"
@@ -73,9 +122,9 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
                             >
                               {comment.comment}
                             </Typography>
-                          </>
-                        }
-                      />
+                          }
+                        />
+                      )}
                     </Box>
                   </Grid>
                   <Grid item xs={1}>
