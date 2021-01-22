@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { navigate } from "@reach/router";
 import { Theme, createStyles, makeStyles } from "@material-ui/core/styles";
 import { orderBy } from "lodash";
 import List from "@material-ui/core/List";
@@ -19,9 +20,11 @@ import {
   editComment,
 } from "../store/comments";
 import { IComment } from "../interfaces/comments";
-import { getInitials, getDate } from "../utils/utils";
+import { getUser } from "../store/users";
+import { getDate, getProfileName } from "../utils/utils";
 import PostMenu from "./common/postMenu";
 import DeleteModal from "./common/deleteModal";
+import ProfileAvatar from "./common/profileAvatar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,6 +50,7 @@ export interface CommentProps {
 const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const userProfile = useSelector(getUser);
   const comments: IComment[] = useSelector(getComments)(postId);
   const sorted = orderBy(comments, ["createdAt"], ["desc"]);
   const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState(false);
@@ -59,10 +63,7 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
     if (userComment) setEditUserComment(userComment.comment);
   }, [userComment]);
 
-  const handleEditComment = (
-    e: React.KeyboardEvent<HTMLDivElement>,
-    commentId: string
-  ) => {
+  const handleEditComment = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && editUserComment !== "") {
       dispatch(
         editComment({ id: editCommentId, updatedComment: editUserComment })
@@ -70,6 +71,17 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
       setEditUserComment("");
       setEditCommentId("");
     }
+  };
+
+  const handleProfileOpen = (id: string) => {
+    const user = userProfile(id);
+    let userData: object = {};
+    let profileNameUrl: string = "";
+    if (user) {
+      userData = user;
+      profileNameUrl = getProfileName(userData);
+    }
+    navigate(`/${profileNameUrl}`, { state: { userData } });
   };
 
   const handleDeleteComment = (id: string) => {
@@ -88,7 +100,11 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
             <React.Fragment key={comment._id}>
               <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                  <Avatar>{getInitials(comment.createdBy.fullName)}</Avatar>
+                  <ProfileAvatar
+                    userId={comment.createdBy._id}
+                    fullName={comment.createdBy.fullName}
+                    handleProfileOpen={handleProfileOpen}
+                  />
                 </ListItemAvatar>
                 <Grid container spacing={3}>
                   <Grid item xs={11}>
@@ -106,9 +122,7 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
                               variant="outlined"
                               fullWidth
                               onChange={handleChange}
-                              onKeyDown={(e) =>
-                                handleEditComment(e, comment._id)
-                              }
+                              onKeyDown={handleEditComment}
                               value={editUserComment}
                             />
                           </Grid>

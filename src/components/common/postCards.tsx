@@ -27,8 +27,7 @@ import {
 } from "../../store/comments";
 import { IImage } from "../../interfaces/images";
 import { addLike } from "../../store/likes";
-import { getInitials, getDate, getProfileName } from "../../utils/utils";
-import { getProfilePicture } from "../../store/users";
+import { getDate, getProfileName } from "../../utils/utils";
 import { getUser } from "../../store/users";
 import Comment from "../comment";
 import ImageUploadGrid from "../imageUploadGrid";
@@ -87,7 +86,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const dispatch = useDispatch();
   const isFailed = useSelector(didCommentFailed);
   const userProfile = useSelector(getUser);
-  const profPicSelector = useSelector(getProfilePicture);
   const sorted = orderBy(posts, ["createdAt"], ["desc"]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
@@ -130,16 +128,6 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleDeletePost = (postId: string) => {
     dispatch(deletePost(postId));
-  };
-
-  const profilePicture = (fullName: string, id: string) => {
-    const profPic = profPicSelector(id);
-    console.log(profPic);
-    return profPic ? (
-      <Avatar alt={profPic.name} src={profPic.url} />
-    ) : (
-      <Avatar>{getInitials(fullName)}</Avatar>
-    );
   };
 
   const handleProfileOpen = (id: string) => {
@@ -190,15 +178,11 @@ const PostCard: React.FC<PostCardProps> = ({
             <CardContent className={classes.postContent}>
               <Grid container wrap="nowrap" spacing={2}>
                 <Grid item>
-                  {userId === post.postedBy._id ? (
-                    profilePicture(post.postedBy.fullName, userId)
-                  ) : (
-                    <ProfileAvatar
-                      userId={post.postedBy._id}
-                      fullName={post.postedBy.fullName}
-                      handleProfileOpen={handleProfileOpen}
-                    />
-                  )}
+                  <ProfileAvatar
+                    userId={post.postedBy._id}
+                    fullName={post.postedBy.fullName}
+                    handleProfileOpen={handleProfileOpen}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <Typography
