@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { orderBy } from "lodash";
+import { navigate } from "@reach/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
@@ -22,18 +23,23 @@ import {
 } from "../../store/comments";
 import { IImage } from "../../interfaces/images";
 import { addLike } from "../../store/likes";
-import { getInitials, getDate } from "../../utils/utils";
+import { getInitials, getDate, getProfileName } from "../../utils/utils";
 import { getProfilePicture } from "../../store/users";
+import { deletePost } from "../../store/posts";
+import { getUser as userAuth } from "../../store/auth";
+import { getUser } from "../../store/users";
+import { IAuthUser } from "../../interfaces/auth";
 import Comment from "../comment";
 import ImageUploadGrid from "../imageUploadGrid";
 import PostMenu from "./postMenu";
+import ProfileAvatar from "../common/profileAvatar";
 
 export interface PostCardProps {
   posts: IPost[];
   images: IImage[];
-  userId: string;
-  setPostId: React.Dispatch<React.SetStateAction<string>>;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  userId?: string;
+  setPostId?: React.Dispatch<React.SetStateAction<string>>;
+  setOpenModal?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,6 +68,9 @@ const useStyles = makeStyles((theme: Theme) =>
     commentsCount: {
       borderBottom: "1px solid",
     },
+    link: {
+      cursor: "pointer",
+    },
   })
 );
 
@@ -75,7 +84,9 @@ const PostCard: React.FC<PostCardProps> = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const isFailed = useSelector(didCommentFailed);
+  const userProfile = useSelector(getUser);
   const profPicSelector = useSelector(getProfilePicture);
+  const user: IAuthUser | null = useSelector(userAuth);
   const sorted = orderBy(posts, ["createdAt"], ["desc"]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
@@ -108,13 +119,35 @@ const PostCard: React.FC<PostCardProps> = ({
     setComment(e.target.value);
   };
 
-  const profilePicture = (firstName: string) => {
-    const profPic = profPicSelector(userId);
+  const handleEditPost = (postId: string) => {
+    if (setOpenModal && setPostId) {
+      setOpenModal(true);
+      setPostId(postId);
+    }
+  };
+
+  const handleDeletePost = (postId: string) => {
+    dispatch(deletePost(postId));
+  };
+
+  const profilePicture = (firstName: string, id: string) => {
+    const profPic = profPicSelector(id);
     return profPic ? (
       <Avatar alt={profPic.name} src={profPic.url} />
     ) : (
       <Avatar>{getInitials(firstName)}</Avatar>
     );
+  };
+
+  const handleProfileOpen = (id: string) => {
+    const user = userProfile(id);
+    let userData: object = {};
+    let profileNameUrl: string = "";
+    if (user) {
+      userData = user;
+      profileNameUrl = getProfileName(userData);
+    }
+    navigate(`/${profileNameUrl}`, { state: { userData } });
   };
 
   const getLikes = (likes: number) => {
@@ -153,19 +186,36 @@ const PostCard: React.FC<PostCardProps> = ({
           <Card className={classes.card}>
             <CardContent className={classes.postContent}>
               <Grid container wrap="nowrap" spacing={2}>
-                <Grid item>{profilePicture(post.postedBy.fullName)}</Grid>
+                <Grid item>
+                  {userId ? (
+                    profilePicture(post.postedBy.fullName, userId)
+                  ) : (
+                    <ProfileAvatar
+                      userId={post.postedBy._id}
+                      fullName={post.postedBy.fullName}
+                      handleProfileOpen={handleProfileOpen}
+                    />
+                  )}
+                </Grid>
                 <Grid item xs={12}>
-                  <Typography>{post.postedBy.fullName}</Typography>
+                  <Typography
+                    className={classes.link}
+                    onClick={() => handleProfileOpen(post.postedBy._id)}
+                  >
+                    {post.postedBy.fullName}
+                  </Typography>
                   <Typography variant="caption" display="block" gutterBottom>
                     {getDate(post.createdAt)}
                   </Typography>
                 </Grid>
                 <Grid item container justify="flex-end" xs={6}>
-                  <PostMenu
-                    postId={post._id}
-                    setOpenModal={setOpenModal}
-                    setId={setPostId}
-                  />
+                  {user && user._id === post.postedBy._id ? (
+                    <PostMenu
+                      postId={post._id}
+                      handleEditPost={handleEditPost}
+                      handleDeletePost={handleDeletePost}
+                    />
+                  ) : null}
                 </Grid>
               </Grid>
               <Grid item xs={12}>
