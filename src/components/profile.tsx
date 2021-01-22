@@ -118,7 +118,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                 }}
               >
                 {displayCoverPhoto()}
-                <Box zIndex="modal" position="absolute">
+                <Box zIndex="app bar" position="absolute">
                   {profilePicture ? (
                     <Avatar
                       className={classes.avatar}
