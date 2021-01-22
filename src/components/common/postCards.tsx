@@ -132,12 +132,13 @@ const PostCard: React.FC<PostCardProps> = ({
     dispatch(deletePost(postId));
   };
 
-  const profilePicture = (firstName: string, id: string) => {
+  const profilePicture = (fullName: string, id: string) => {
     const profPic = profPicSelector(id);
+    console.log(profPic);
     return profPic ? (
       <Avatar alt={profPic.name} src={profPic.url} />
     ) : (
-      <Avatar>{getInitials(firstName)}</Avatar>
+      <Avatar>{getInitials(fullName)}</Avatar>
     );
   };
 
@@ -189,7 +190,7 @@ const PostCard: React.FC<PostCardProps> = ({
             <CardContent className={classes.postContent}>
               <Grid container wrap="nowrap" spacing={2}>
                 <Grid item>
-                  {userId ? (
+                  {userId === post.postedBy._id ? (
                     profilePicture(post.postedBy.fullName, userId)
                   ) : (
                     <ProfileAvatar
