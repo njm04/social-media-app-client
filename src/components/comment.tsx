@@ -51,7 +51,8 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
   const sorted = orderBy(comments, ["createdAt"], ["desc"]);
   const [openDeleteCommentModal, setOpenDeleteCommentModal] = useState(false);
   const [commentId, setCommentId] = useState("");
-  const userComment = useSelector(getSingleComment)(commentId);
+  const [editCommentId, setEditCommentId] = useState("");
+  const userComment = useSelector(getSingleComment)(editCommentId);
   const [editUserComment, setEditUserComment] = useState("");
 
   useEffect((): any => {
@@ -63,9 +64,11 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
     commentId: string
   ) => {
     if (e.key === "Enter" && editUserComment !== "") {
-      dispatch(editComment({ id: commentId, updatedComment: editUserComment }));
+      dispatch(
+        editComment({ id: editCommentId, updatedComment: editUserComment })
+      );
       setEditUserComment("");
-      setCommentId("");
+      setEditCommentId("");
     }
   };
 
@@ -132,6 +135,7 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
                       <PostMenu
                         commentId={comment._id}
                         setCommentId={setCommentId}
+                        setEditCommentId={setEditCommentId}
                         setOpenDeleteCommentModal={setOpenDeleteCommentModal}
                       />
                     ) : null}
