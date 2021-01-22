@@ -18,14 +18,16 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
 }: ProfileAvatarProps) => {
   const avatar = useSelector(getProfilePicture)(userId);
 
-  return avatar ? (
-    <IconButton color="inherit">
+  return avatar && handleProfileOpen ? (
+    <IconButton color="inherit" onClick={() => handleProfileOpen(userId)}>
       <Avatar alt={avatar.name} src={avatar.url} />
     </IconButton>
   ) : handleProfileOpen ? (
     <IconButton color="inherit" onClick={() => handleProfileOpen(userId)}>
       <Avatar>{getInitials(fullName)}</Avatar>
     </IconButton>
+  ) : avatar ? (
+    <Avatar alt={avatar.name} src={avatar.url} />
   ) : (
     <IconButton color="inherit">
       <Avatar>{getInitials(fullName)}</Avatar>
