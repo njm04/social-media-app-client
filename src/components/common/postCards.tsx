@@ -14,7 +14,11 @@ import Divider from "@material-ui/core/Divider";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import TextField from "@material-ui/core/TextField";
-import { postCommentIncremented, likePost } from "../../store/posts";
+import {
+  postCommentIncremented,
+  likePost,
+  deletePost,
+} from "../../store/posts";
 import { IPost, IPostImages } from "../../interfaces/posts";
 import {
   loadComments,
@@ -25,12 +29,12 @@ import { IImage } from "../../interfaces/images";
 import { addLike } from "../../store/likes";
 import { getInitials, getDate, getProfileName } from "../../utils/utils";
 import { getProfilePicture } from "../../store/users";
-import { deletePost } from "../../store/posts";
 import { getUser } from "../../store/users";
 import Comment from "../comment";
 import ImageUploadGrid from "../imageUploadGrid";
 import PostMenu from "./postMenu";
 import ProfileAvatar from "../common/profileAvatar";
+import DeleteModal from "../common/deleteModal";
 
 export interface PostCardProps {
   posts: IPost[];
@@ -88,6 +92,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
   const [comment, setComment] = useState("");
+  const [openDeletePostModal, setOpenDeletePostModal] = useState(false);
 
   const onKeyEnter = (e: React.KeyboardEvent<HTMLDivElement>, post: string) => {
     if (e.key === "Enter" && comment !== "") {
@@ -210,7 +215,8 @@ const PostCard: React.FC<PostCardProps> = ({
                     <PostMenu
                       postId={post._id}
                       handleEditPost={handleEditPost}
-                      handleDeletePost={handleDeletePost}
+                      setPostId={setId}
+                      setOpenDeletePostModal={setOpenDeletePostModal}
                     />
                   ) : null}
                 </Grid>
@@ -262,7 +268,7 @@ const PostCard: React.FC<PostCardProps> = ({
                       onKeyDown={(e) => onKeyEnter(e, post._id)}
                       onChange={handleComment}
                     />
-                    <Comment postId={post._id} key={post._id} />
+                    <Comment postId={post._id} key={post._id} userId={userId} />
                   </>
                 )}
               </Grid>
@@ -270,6 +276,12 @@ const PostCard: React.FC<PostCardProps> = ({
           </Card>
         </Box>
       ))}
+      <DeleteModal
+        postId={id}
+        open={openDeletePostModal}
+        setOpenDeletePostModal={setOpenDeletePostModal}
+        handleDeletePost={handleDeletePost}
+      />
     </>
   );
 };

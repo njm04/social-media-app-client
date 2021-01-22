@@ -36,9 +36,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface CommentProps {
   postId: string;
+  userId: string;
 }
 
-const Comment: React.FC<CommentProps> = ({ postId }: CommentProps) => {
+const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const comments: IComment[] = useSelector(getComments)(postId);
@@ -80,11 +81,13 @@ const Comment: React.FC<CommentProps> = ({ postId }: CommentProps) => {
                     </Box>
                   </Grid>
                   <Grid item xs={1}>
-                    <PostMenu
-                      commentId={comment._id}
-                      setCommentId={setCommentId}
-                      setOpenDeleteCommentModal={setOpenDeleteCommentModal}
-                    />
+                    {userId === comment.createdBy._id ? (
+                      <PostMenu
+                        commentId={comment._id}
+                        setCommentId={setCommentId}
+                        setOpenDeleteCommentModal={setOpenDeleteCommentModal}
+                      />
+                    ) : null}
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="caption" display="block" gutterBottom>
@@ -100,7 +103,7 @@ const Comment: React.FC<CommentProps> = ({ postId }: CommentProps) => {
       </List>
       <DeleteModal
         commentId={commentId}
-        openDeleteCommentModal={openDeleteCommentModal}
+        open={openDeleteCommentModal}
         setOpenDeleteCommentModal={setOpenDeleteCommentModal}
         handleDeleteComment={handleDeleteComment}
       />

@@ -66,20 +66,27 @@ const DialogActions = withStyles((theme: Theme) => ({
 }))(MuiDialogActions);
 
 export interface DeleteModalProps {
+  postId?: string;
   commentId?: string;
-  openDeleteCommentModal: boolean;
+  open: boolean;
+  setOpenDeletePostModal?: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenDeleteCommentModal?: React.Dispatch<React.SetStateAction<boolean>>;
   handleDeleteComment?(commentId: string): void;
+  handleDeletePost?(postId: string): void;
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({
+  postId,
   commentId,
-  openDeleteCommentModal,
+  open,
   setOpenDeleteCommentModal,
   handleDeleteComment,
+  setOpenDeletePostModal,
+  handleDeletePost,
 }: DeleteModalProps) => {
   const handleClose = () => {
     if (setOpenDeleteCommentModal) setOpenDeleteCommentModal(false);
+    if (setOpenDeletePostModal) setOpenDeletePostModal(false);
   };
 
   const handleDelete = () => {
@@ -87,6 +94,27 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       handleDeleteComment(commentId);
       setOpenDeleteCommentModal(false);
     }
+
+    if (handleDeletePost && setOpenDeletePostModal && postId) {
+      handleDeletePost(postId);
+      setOpenDeletePostModal(false);
+    }
+  };
+
+  const dialog = () => {
+    if (commentId)
+      return {
+        title: "Delete comment",
+        content: "Are you sure you want to delete this comment?",
+      };
+
+    if (postId)
+      return {
+        title: "Delete post",
+        content: "Are you sure you want to delete this post?",
+      };
+
+    return { title: "", content: "" };
   };
 
   return (
@@ -94,15 +122,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       <Dialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={openDeleteCommentModal}
+        open={open}
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Delete comment
+          {dialog().title}
         </DialogTitle>
         <DialogContent dividers>
-          <Typography gutterBottom>
-            Are you sure you want to delete this comment?
-          </Typography>
+          <Typography gutterBottom>{dialog().content}</Typography>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose} color="default">

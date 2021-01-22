@@ -45,17 +45,19 @@ export interface PostMenuProps {
   commentId?: string;
   setCommentId?: React.Dispatch<React.SetStateAction<string>>;
   setOpenDeleteCommentModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  setPostId?: React.Dispatch<React.SetStateAction<string>>;
+  setOpenDeletePostModal?: React.Dispatch<React.SetStateAction<boolean>>;
   handleEditPost?(postId: string): void;
-  handleDeletePost?(postId: string): void;
 }
 
 const PostMenu: React.FC<PostMenuProps> = ({
   postId,
   commentId,
   handleEditPost,
-  handleDeletePost,
   setCommentId,
   setOpenDeleteCommentModal,
+  setPostId,
+  setOpenDeletePostModal,
 }: PostMenuProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -73,11 +75,16 @@ const PostMenu: React.FC<PostMenuProps> = ({
   };
 
   const handleDelete = () => {
-    if (handleDeletePost && postId) handleDeletePost(postId);
+    if (setOpenDeletePostModal && setPostId && postId) {
+      setPostId(postId);
+      setOpenDeletePostModal(true);
+    }
+
     if (setOpenDeleteCommentModal && setCommentId && commentId) {
       setCommentId(commentId);
       setOpenDeleteCommentModal(true);
     }
+
     setAnchorEl(null);
   };
 
