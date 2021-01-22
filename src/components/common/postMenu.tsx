@@ -94,11 +94,18 @@ const PostMenu: React.FC<PostMenuProps> = ({
     return { edit: "", delete: "" };
   };
 
+  const buttonSize = () => {
+    if (postId) return "medium";
+    if (commentId) return "small";
+    return "medium";
+  };
+
   return (
     <div>
       <IconButton
         color="default"
         aria-label="post"
+        size={buttonSize()}
         aria-controls="customized-menu"
         aria-haspopup="true"
         component="span"
