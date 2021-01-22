@@ -5,6 +5,8 @@ import { loadPosts, getAllPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import Container from "@material-ui/core/Container";
 import { loadLikes } from "../store/likes";
+import { getUser } from "../store/auth";
+import { IAuthUser } from "../interfaces/auth";
 import Post from "./post";
 import PostCard from "./common/postCards";
 import EditPostModal from "./editPostModal";
@@ -13,6 +15,7 @@ export interface NewsFeedProps extends RouteComponentProps {}
 
 const NewsFeed: React.FC<NewsFeedProps> = () => {
   const dispatch = useDispatch();
+  const user: IAuthUser | null = useSelector(getUser);
   const posts = useSelector(getAllPosts);
   const images = useSelector(getImages);
   const [id, setPostId] = useState("");
@@ -24,6 +27,11 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
     dispatch(loadLikes());
   }, [dispatch]);
 
+  const userId = (): string => {
+    if (user && user._id) return user._id;
+    return "";
+  };
+
   return (
     <>
       <Post />
@@ -31,6 +39,7 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
         <PostCard
           posts={posts}
           images={images}
+          userId={userId()}
           setPostId={setPostId}
           setOpenModal={setOpenModal}
         />

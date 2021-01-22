@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import Menu, { MenuProps } from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -9,7 +8,6 @@ import IconButton from "@material-ui/core/IconButton";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { FaEllipsisH } from "react-icons/fa";
-import { deletePost } from "../../store/posts";
 
 const StyledMenu = withStyles({
   paper: {
@@ -43,18 +41,23 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem);
 
 export interface PostMenuProps {
-  postId: string;
-  setId: React.Dispatch<React.SetStateAction<string>>;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  postId?: string;
+  commentId?: string;
+  setCommentId?: React.Dispatch<React.SetStateAction<string>>;
+  setOpenDeleteCommentModal?: React.Dispatch<React.SetStateAction<boolean>>;
+  handleEditPost?(postId: string): void;
+  handleDeletePost?(postId: string): void;
 }
 
 const PostMenu: React.FC<PostMenuProps> = ({
   postId,
-  setId,
-  setOpenModal,
+  commentId,
+  handleEditPost,
+  handleDeletePost,
+  setCommentId,
+  setOpenDeleteCommentModal,
 }: PostMenuProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const dispatch = useDispatch();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -65,14 +68,23 @@ const PostMenu: React.FC<PostMenuProps> = ({
   };
 
   const handleEdit = () => {
-    setOpenModal(true);
-    setId(postId);
+    if (handleEditPost && postId) handleEditPost(postId);
     setAnchorEl(null);
   };
 
   const handleDelete = () => {
-    dispatch(deletePost(postId));
+    if (handleDeletePost && postId) handleDeletePost(postId);
+    if (setOpenDeleteCommentModal && setCommentId && commentId) {
+      setCommentId(commentId);
+      setOpenDeleteCommentModal(true);
+    }
     setAnchorEl(null);
+  };
+
+  const buttonText = () => {
+    if (postId) return { edit: "Edit post", delete: "Delete post" };
+    if (commentId) return { edit: "Edit comment", delete: "Delete comment" };
+    return { edit: "", delete: "" };
   };
 
   return (
@@ -98,13 +110,13 @@ const PostMenu: React.FC<PostMenuProps> = ({
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary="Edit post" />
+          <ListItemText primary={buttonText().edit} />
         </StyledMenuItem>
         <StyledMenuItem onClick={handleDelete}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText primary="Delete post" />
+          <ListItemText primary={buttonText().delete} />
         </StyledMenuItem>
       </StyledMenu>
     </div>

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { memoize } from "lodash";
+import { toast } from "react-toastify";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
 import { IComment } from "../interfaces/comments";
@@ -40,6 +41,15 @@ const slice = createSlice({
       comments.loading = false;
       comments.isError = false;
     },
+    commentDeleted: (comments, action: PayloadAction<IComment>) => {
+      const { _id } = action.payload;
+      const index = comments.list.findIndex(
+        (comment: any) => comment._id === _id
+      );
+      comments.list.splice(index, 1);
+      toast.dark("You've deleted your comment.");
+      comments.loading = false;
+    },
   },
 });
 
@@ -48,11 +58,11 @@ const {
   commentsFailed,
   commentsReceived,
   newCommentReceived,
+  commentDeleted,
 } = slice.actions;
 export default slice.reducer;
 
 export const loadComments = (postId: string) => {
-  console.log(postId);
   return apiCallBegan({
     url: `${url}/${postId}`,
     method: "GET",
@@ -69,6 +79,16 @@ export const createComment = (comment: object) => {
     data: comment,
     onStart: commentsRequested.type,
     onSuccess: newCommentReceived.type,
+    onError: commentsFailed.type,
+  });
+};
+
+export const deleteComment = (id: string) => {
+  return apiCallBegan({
+    url: `${url}/${id}`,
+    method: "DELETE",
+    onStart: commentsRequested.type,
+    onSuccess: commentDeleted.type,
     onError: commentsFailed.type,
   });
 };
