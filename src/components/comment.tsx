@@ -85,7 +85,7 @@ const Comment: React.FC<CommentProps> = ({ postId, userId }: CommentProps) => {
             <React.Fragment key={comment._id}>
               <ListItem alignItems="flex-start">
                 <ListItemAvatar>
-                  <Avatar>{getInitials(comment.createdBy.firstName)}</Avatar>
+                  <Avatar>{getInitials(comment.createdBy.fullName)}</Avatar>
                 </ListItemAvatar>
                 <Grid container spacing={3}>
                   <Grid item xs={11}>
