@@ -26,9 +26,7 @@ import { addLike } from "../../store/likes";
 import { getInitials, getDate, getProfileName } from "../../utils/utils";
 import { getProfilePicture } from "../../store/users";
 import { deletePost } from "../../store/posts";
-import { getUser as userAuth } from "../../store/auth";
 import { getUser } from "../../store/users";
-import { IAuthUser } from "../../interfaces/auth";
 import Comment from "../comment";
 import ImageUploadGrid from "../imageUploadGrid";
 import PostMenu from "./postMenu";
@@ -37,7 +35,7 @@ import ProfileAvatar from "../common/profileAvatar";
 export interface PostCardProps {
   posts: IPost[];
   images: IImage[];
-  userId?: string;
+  userId: string;
   setPostId?: React.Dispatch<React.SetStateAction<string>>;
   setOpenModal?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -86,7 +84,6 @@ const PostCard: React.FC<PostCardProps> = ({
   const isFailed = useSelector(didCommentFailed);
   const userProfile = useSelector(getUser);
   const profPicSelector = useSelector(getProfilePicture);
-  const user: IAuthUser | null = useSelector(userAuth);
   const sorted = orderBy(posts, ["createdAt"], ["desc"]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
@@ -209,7 +206,7 @@ const PostCard: React.FC<PostCardProps> = ({
                   </Typography>
                 </Grid>
                 <Grid item container justify="flex-end" xs={6}>
-                  {user && user._id === post.postedBy._id ? (
+                  {userId === post.postedBy._id ? (
                     <PostMenu
                       postId={post._id}
                       handleEditPost={handleEditPost}
