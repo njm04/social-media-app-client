@@ -197,7 +197,10 @@ const NavBar: React.FC<NavBarProps> = () => {
             className={classes.title}
             variant="h6"
             noWrap
-            onClick={() => navigate("/news-feed")}
+            onClick={() => {
+              setSearchQuery("");
+              navigate("/news-feed");
+            }}
           >
             Facebook-Clone
           </Typography>
