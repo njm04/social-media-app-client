@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { orderBy } from "lodash";
 import { navigate } from "@reach/router";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Card from "@material-ui/core/Card";
