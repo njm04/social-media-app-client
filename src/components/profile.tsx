@@ -13,9 +13,12 @@ import Button from "@material-ui/core/Button";
 import EditIcon from "@material-ui/icons/Edit";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
+import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import { getUserPosts, loadPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import { getProfilePicture, getCoverPhoto } from "../store/users";
+import { IAuthUser } from "../interfaces/auth";
+import { getUser } from "../store/auth";
 import { loadUsers } from "../store/users";
 import { loadLikes } from "../store/likes";
 import { getInitials } from "../utils/utils";
@@ -69,6 +72,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const images = useSelector(getImages);
   const user = location.state.userData;
   const userId = user._id;
+  const loggedInUser: IAuthUser | null = useSelector(getUser);
   const userPosts = useSelector(getUserPosts)(userId);
   const profilePicture = useSelector(getProfilePicture)(userId);
   const coverPhoto = useSelector(getCoverPhoto)(userId);
@@ -140,13 +144,25 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                 </Box>
                 <Divider variant="fullWidth" component="hr" />
                 <Box pt={2}>
-                  <Button
-                    color="primary"
-                    startIcon={<EditIcon />}
-                    onClick={handleEditProfile}
-                  >
-                    Edit Profile
-                  </Button>
+                  {loggedInUser && loggedInUser._id === userId ? (
+                    <Button
+                      color="primary"
+                      startIcon={<EditIcon />}
+                      onClick={handleEditProfile}
+                    >
+                      Edit Profile
+                    </Button>
+                  ) : (
+                    <Grid container justify="flex-end">
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        startIcon={<PersonAddIcon />}
+                      >
+                        Add Friend
+                      </Button>
+                    </Grid>
+                  )}
                 </Box>
               </Paper>
             </Grid>
