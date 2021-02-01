@@ -1,32 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { navigate } from "@reach/router";
-import {
-  fade,
-  makeStyles,
-  Theme,
-  createStyles,
-} from "@material-ui/core/styles";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import InputBase from "@material-ui/core/InputBase";
 import Badge from "@material-ui/core/Badge";
+import Box from "@material-ui/core/Box";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import Avatar from "@material-ui/core/Avatar";
 import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import Search from "./search";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedOut, getUser } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
 import auth from "../../services/authService";
 import { getInitials, getProfileName } from "./../../utils/utils";
 import { getProfilePicture } from "../../store/users";
+import { IUserSearched } from "../../interfaces/users";
+import { search } from "../../services/searchFriendService";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,43 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
       cursor: "pointer",
       [theme.breakpoints.up("sm")]: {
         display: "block",
-      },
-    },
-    search: {
-      position: "relative",
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.common.white, 0.15),
-      "&:hover": {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
-      },
-      marginRight: theme.spacing(2),
-      marginLeft: 0,
-      width: "100%",
-      [theme.breakpoints.up("sm")]: {
-        marginLeft: theme.spacing(3),
-        width: "auto",
-      },
-    },
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: "100%",
-      position: "absolute",
-      pointerEvents: "none",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    inputRoot: {
-      color: "inherit",
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
       },
     },
     sectionDesktop: {
@@ -106,6 +66,8 @@ const NavBar: React.FC<NavBarProps> = () => {
   const userId = user && user._id ? user._id : "";
   const profilePicture = useSelector(getProfilePicture)(userId);
   const [name] = useState<string>(user && user.fullName ? user.fullName : "");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<IUserSearched[]>();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
@@ -116,8 +78,19 @@ const NavBar: React.FC<NavBarProps> = () => {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  useEffect((): any => {
+    async function searchFriend() {
+      setSearchResults(await search(searchQuery));
+    }
+    searchFriend();
+  }, [searchQuery]);
+
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   const handleProfileOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -229,19 +202,12 @@ const NavBar: React.FC<NavBarProps> = () => {
           >
             Facebook-Clone
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-            />
-          </div>
+          <Search
+            handleSearch={handleSearch}
+            searchResults={!searchResults ? [] : searchResults}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton

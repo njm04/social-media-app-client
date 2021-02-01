@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-axios.defaults.baseURL = process.env.REACT_APP_MASSAGE_BOOKING_API_URL;
+axios.defaults.baseURL = process.env.REACT_APP_SOCIAL_MEDIA_API_URL;
 const tokenKey = "token";
 
 axios.interceptors.response.use(

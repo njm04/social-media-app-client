@@ -22,3 +22,9 @@ export interface IUser {
   profilePicture: IProfPic;
   coverPhoto: IProfPic;
 }
+
+export interface IUserSearched {
+  _id: string;
+  fullName: string;
+  profilePicture: IProfPic;
+}
