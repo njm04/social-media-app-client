@@ -34,6 +34,15 @@ const slice = createSlice({
       friends.list.push(action.payload);
       friends.loading = false;
     },
+    friendRequestCancelled: (
+      friends,
+      action: PayloadAction<IFriendRequest>
+    ) => {
+      const { _id } = action.payload;
+      const index = friends.list.findIndex((request) => request._id === _id);
+      friends.list.splice(index, 1);
+      friends.loading = false;
+    },
   },
 });
 
@@ -42,6 +51,7 @@ const {
   friendsRequestFailed,
   addFriendRequested,
   friendsReceived,
+  friendRequestCancelled,
 } = slice.actions;
 export default slice.reducer;
 
@@ -72,13 +82,12 @@ export const addFriend = (data: IAddFriend) => {
   });
 };
 
-export const cancelFriendRequest = (data: IAddFriend) => {
+export const cancelFriendRequest = (id: string) => {
   return apiCallBegan({
-    url,
+    url: `${url}/${id}`,
     method: "DELETE",
-    data,
     onStart: friendsRequested.type,
-    onSuccess: addFriendRequested.type,
+    onSuccess: friendRequestCancelled.type,
     onError: friendsRequestFailed.type,
   });
 };
@@ -93,4 +102,10 @@ export const isFriends = createSelector(
           friend.recipient === data.recipient
       )
     )
+);
+
+export const isCancelled = createSelector(
+  (state: any) => state.entities.friends.list,
+  (friends: IFriendRequest[]) =>
+    memoize((id: string) => friends.find((friend) => friend._id === id))
 );
