@@ -18,6 +18,10 @@ import Search from "./search";
 import { useDispatch, useSelector } from "react-redux";
 import { userLoggedOut, getUser } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
+import {
+  getFriends,
+  loadFriendRequestNotifications,
+} from "../../store/friends";
 import auth from "../../services/authService";
 import { getInitials, getProfileName } from "./../../utils/utils";
 import { getProfilePicture } from "../../store/users";
@@ -64,6 +68,7 @@ const NavBar: React.FC<NavBarProps> = () => {
   const user: IAuthUser | null = useSelector(getUser);
   const userId = user && user._id ? user._id : "";
   const profilePicture = useSelector(getProfilePicture)(userId);
+  const friendRequest = useSelector(getFriends)(userId);
   const [name] = useState<string>(user && user.fullName ? user.fullName : "");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<IUserSearched[]>();
@@ -83,6 +88,10 @@ const NavBar: React.FC<NavBarProps> = () => {
     }
     searchFriend();
   }, [searchQuery]);
+
+  useEffect((): any => {
+    dispatch(loadFriendRequestNotifications());
+  }, [dispatch]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -226,13 +235,13 @@ const NavBar: React.FC<NavBarProps> = () => {
                 {user && user.firstName}
               </Typography>
             </IconButton>
-            <IconButton aria-label="show 4 new mails" color="inherit">
+            {/* <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
+              <Badge badgeContent={friendRequest.length} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
