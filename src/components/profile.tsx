@@ -23,6 +23,8 @@ import {
   isFriends,
   cancelFriendRequest,
   isCancelled,
+  isAddFriendRequested,
+  confirmFriendRequest,
 } from "../store/friends";
 import { IFriendRequest } from "../interfaces/friends";
 import { IAuthUser } from "../interfaces/auth";
@@ -71,6 +73,11 @@ const useStyles = makeStyles((theme: Theme) =>
     gridList: {
       width: 918,
     },
+    responseButtons: {
+      "& > *": {
+        margin: theme.spacing(0.5),
+      },
+    },
   })
 );
 
@@ -85,6 +92,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const profilePicture = useSelector(getProfilePicture)(userId);
   const coverPhoto = useSelector(getCoverPhoto)(userId);
   const isFriendsSelector = useSelector(isFriends);
+  const isAddFriendRequestedSelector = useSelector(isAddFriendRequested);
   const isFriendRequestCancelled = useSelector(isCancelled);
   const [openModal, setOpenModal] = useState(false);
   const [openEditProfileModal, setopenEditProfileModal] = useState(false);
@@ -101,13 +109,21 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
 
   useEffect((): any => {
     if (loggedInUser && loggedInUser._id) {
-      const status = isFriendsSelector({
+      let friend = isFriendsSelector({
         requester: loggedInUser._id,
         recipient: userId,
       });
-      if (status) setFriendData(status);
+
+      if (friend) setFriendData(friend);
+      else {
+        friend = isAddFriendRequestedSelector({
+          requester: userId,
+          recipient: loggedInUser._id,
+        });
+        if (friend) setFriendData(friend);
+      }
     }
-  }, [loggedInUser, userId, isFriendsSelector]);
+  }, [loggedInUser, userId, isFriendsSelector, isAddFriendRequestedSelector]);
 
   useEffect((): any => {
     if (friendData)
@@ -133,7 +149,29 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     if (friendData) dispatch(cancelFriendRequest(friendData._id));
   };
 
+  const handleConfirmFriendRequest = () => {
+    if (friendData) dispatch(confirmFriendRequest(friendData._id, "accepted"));
+  };
+
   const displayAddFriendButton = () => {
+    if (friendData && friendData.requester === userId) {
+      return (
+        <Grid container justify="flex-end" className={classes.responseButtons}>
+          <Button
+            color="primary"
+            size="small"
+            variant="contained"
+            onClick={handleConfirmFriendRequest}
+          >
+            Confirm request
+          </Button>
+          <Button color="secondary" size="small" variant="contained">
+            Delete request
+          </Button>
+        </Grid>
+      );
+    }
+
     if (friendData && !cancelledRequest) {
       return (
         <Grid container justify="flex-end">

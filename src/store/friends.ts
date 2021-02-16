@@ -8,11 +8,13 @@ const url = "/friends";
 
 interface FriendSliceState {
   list: IFriendRequest[];
+  notifications: IFriendRequest[];
   loading: boolean;
 }
 
 const initialState: FriendSliceState = {
   list: [],
+  notifications: [],
   loading: false,
 };
 
@@ -30,6 +32,13 @@ const slice = createSlice({
       friends.list = action.payload;
       friends.loading = false;
     },
+    friendRequestNotificationsReceived: (
+      friends,
+      action: PayloadAction<IFriendRequest[]>
+    ) => {
+      friends.notifications = action.payload;
+      friends.loading = false;
+    },
     addFriendRequested: (friends, action: PayloadAction<IFriendRequest>) => {
       friends.list.push(action.payload);
       friends.loading = false;
@@ -43,6 +52,12 @@ const slice = createSlice({
       friends.list.splice(index, 1);
       friends.loading = false;
     },
+    friendRequestResponse: (friends, action: PayloadAction<IFriendRequest>) => {
+      const { _id } = action.payload;
+      const index = friends.list.findIndex((request) => request._id === _id);
+      friends.list[index] = action.payload;
+      friends.loading = false;
+    },
   },
 });
 
@@ -52,6 +67,8 @@ const {
   addFriendRequested,
   friendsReceived,
   friendRequestCancelled,
+  friendRequestNotificationsReceived,
+  friendRequestResponse,
 } = slice.actions;
 export default slice.reducer;
 
@@ -67,6 +84,16 @@ export const loadFriends = () => {
     method: "GET",
     onStart: friendsRequested.type,
     onSuccess: friendsReceived.type,
+    onError: addFriendRequested.type,
+  });
+};
+
+export const loadFriendRequestNotifications = () => {
+  return apiCallBegan({
+    url: `${url}/friend-request-notification`,
+    method: "GET",
+    onStart: friendsRequested.type,
+    onSuccess: friendRequestNotificationsReceived.type,
     onError: addFriendRequested.type,
   });
 };
@@ -92,6 +119,17 @@ export const cancelFriendRequest = (id: string) => {
   });
 };
 
+export const confirmFriendRequest = (id: string, status: string) => {
+  return apiCallBegan({
+    url: `${url}/${id}`,
+    method: "PATCH",
+    data: { status },
+    onStart: friendsRequested.type,
+    onSuccess: friendRequestResponse.type,
+    onError: friendsRequestFailed.type,
+  });
+};
+
 export const isFriends = createSelector(
   (state: any) => state.entities.friends.list,
   (friends: IFriendRequest[]) =>
@@ -104,8 +142,27 @@ export const isFriends = createSelector(
     )
 );
 
+export const isAddFriendRequested = createSelector(
+  (state: any) => state.entities.friends.notifications,
+  (friends: IFriendRequest[]) =>
+    memoize((data: IIsFriends) =>
+      friends.find(
+        (friend) =>
+          friend.requester === data.requester &&
+          friend.recipient === data.recipient
+      )
+    )
+);
 export const isCancelled = createSelector(
   (state: any) => state.entities.friends.list,
   (friends: IFriendRequest[]) =>
     memoize((id: string) => friends.find((friend) => friend._id === id))
+);
+
+export const getFriends = createSelector(
+  (state: any) => state.entities.friends.notifications,
+  (friends: IFriendRequest[]) =>
+    memoize((id: string) =>
+      friends.filter((request) => request.recipient === id)
+    )
 );
