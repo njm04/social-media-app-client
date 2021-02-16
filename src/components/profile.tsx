@@ -14,9 +14,12 @@ import EditIcon from "@material-ui/icons/Edit";
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import CancelIcon from "@material-ui/icons/Cancel";
 import { getUserPosts, loadPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import { getProfilePicture, getCoverPhoto } from "../store/users";
+import { addFriend, isFriends } from "../store/friends";
+import { IFriendRequest } from "../interfaces/friends";
 import { IAuthUser } from "../interfaces/auth";
 import { getUser } from "../store/auth";
 import { loadUsers } from "../store/users";
@@ -76,8 +79,10 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const userPosts = useSelector(getUserPosts)(userId);
   const profilePicture = useSelector(getProfilePicture)(userId);
   const coverPhoto = useSelector(getCoverPhoto)(userId);
+  const isFriendsSelector = useSelector(isFriends);
   const [openModal, setOpenModal] = useState(false);
   const [openEditProfileModal, setopenEditProfileModal] = useState(false);
+  const [friendData, setFriendData] = useState<IFriendRequest>();
   const [id, setPostId] = useState("");
 
   useEffect((): any => {
@@ -87,8 +92,73 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     dispatch(loadUsers());
   }, [dispatch]);
 
+  useEffect((): any => {
+    if (loggedInUser && loggedInUser._id) {
+      const status = isFriendsSelector({
+        requester: loggedInUser._id,
+        recipient: userId,
+      });
+      if (status) setFriendData(status);
+    }
+  }, [loggedInUser, userId, isFriendsSelector]);
+
   const handleEditProfile = () => {
     setopenEditProfileModal(true);
+  };
+
+  const handleAddFriend = () => {
+    if (loggedInUser && loggedInUser._id) {
+      const data = {
+        requester: loggedInUser._id,
+        recipient: userId,
+        status: "requested",
+      };
+      dispatch(addFriend(data));
+    }
+  };
+
+  const handleCancelFriendRequest = () => {
+    console.log("clicked");
+  };
+
+  const displayAddFriendButton = () => {
+    if (friendData) {
+      return friendData.status !== "requested" ? (
+        <Grid container justify="flex-end">
+          <Button
+            color="primary"
+            variant="contained"
+            startIcon={<PersonAddIcon />}
+            onClick={handleAddFriend}
+          >
+            Add Friend
+          </Button>
+        </Grid>
+      ) : (
+        <Grid container justify="flex-end">
+          <Button
+            color="primary"
+            variant="contained"
+            startIcon={<CancelIcon />}
+            onClick={handleCancelFriendRequest}
+          >
+            Cancel friend request
+          </Button>
+        </Grid>
+      );
+    }
+    return (
+      <Grid container justify="flex-end">
+        <Button
+          color="primary"
+          variant="contained"
+          startIcon={<PersonAddIcon />}
+          onClick={handleAddFriend}
+        >
+          Add Friend
+        </Button>
+      </Grid>
+    );
   };
 
   const displayCoverPhoto = () => {
@@ -153,15 +223,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                       Edit Profile
                     </Button>
                   ) : (
-                    <Grid container justify="flex-end">
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        startIcon={<PersonAddIcon />}
-                      >
-                        Add Friend
-                      </Button>
-                    </Grid>
+                    displayAddFriendButton()
                   )}
                 </Box>
               </Paper>
