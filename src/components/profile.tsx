@@ -18,7 +18,12 @@ import CancelIcon from "@material-ui/icons/Cancel";
 import { getUserPosts, loadPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import { getProfilePicture, getCoverPhoto } from "../store/users";
-import { addFriend, isFriends } from "../store/friends";
+import {
+  addFriend,
+  isFriends,
+  cancelFriendRequest,
+  isCancelled,
+} from "../store/friends";
 import { IFriendRequest } from "../interfaces/friends";
 import { IAuthUser } from "../interfaces/auth";
 import { getUser } from "../store/auth";
@@ -80,9 +85,11 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const profilePicture = useSelector(getProfilePicture)(userId);
   const coverPhoto = useSelector(getCoverPhoto)(userId);
   const isFriendsSelector = useSelector(isFriends);
+  const isFriendRequestCancelled = useSelector(isCancelled);
   const [openModal, setOpenModal] = useState(false);
   const [openEditProfileModal, setopenEditProfileModal] = useState(false);
   const [friendData, setFriendData] = useState<IFriendRequest>();
+  const [cancelledRequest, setCancelledRequest] = useState<IFriendRequest>();
   const [id, setPostId] = useState("");
 
   useEffect((): any => {
@@ -102,6 +109,11 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     }
   }, [loggedInUser, userId, isFriendsSelector]);
 
+  useEffect((): any => {
+    if (friendData)
+      setCancelledRequest(isFriendRequestCancelled(friendData._id));
+  }, [friendData, isFriendRequestCancelled]);
+
   const handleEditProfile = () => {
     setopenEditProfileModal(true);
   };
@@ -118,10 +130,25 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   };
 
   const handleCancelFriendRequest = () => {
-    console.log("clicked");
+    if (friendData) dispatch(cancelFriendRequest(friendData._id));
   };
 
   const displayAddFriendButton = () => {
+    if (friendData && !cancelledRequest) {
+      return (
+        <Grid container justify="flex-end">
+          <Button
+            color="primary"
+            variant="contained"
+            startIcon={<PersonAddIcon />}
+            onClick={handleAddFriend}
+          >
+            Add Friend
+          </Button>
+        </Grid>
+      );
+    }
+
     if (friendData) {
       return friendData.status !== "requested" ? (
         <Grid container justify="flex-end">
