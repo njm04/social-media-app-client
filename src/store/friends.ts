@@ -50,12 +50,20 @@ const slice = createSlice({
       const { _id } = action.payload;
       const index = friends.list.findIndex((request) => request._id === _id);
       friends.list.splice(index, 1);
+      const requestNotifIndex = friends.notifications.findIndex(
+        (request) => request._id === _id
+      );
+      friends.notifications.splice(requestNotifIndex, 1);
       friends.loading = false;
     },
     friendRequestResponse: (friends, action: PayloadAction<IFriendRequest>) => {
       const { _id } = action.payload;
       const index = friends.list.findIndex((request) => request._id === _id);
       friends.list[index] = action.payload;
+      const requestNotifIndex = friends.notifications.findIndex(
+        (request) => request._id === _id
+      );
+      friends.notifications[requestNotifIndex] = action.payload;
       friends.loading = false;
     },
   },
@@ -165,4 +173,10 @@ export const getFriends = createSelector(
     memoize((id: string) =>
       friends.filter((request) => request.recipient === id)
     )
+);
+
+export const isAccepted = createSelector(
+  (state: any) => state.entities.friends.list,
+  (friends: IFriendRequest[]) =>
+    memoize((id: string) => friends.find((request) => request._id === id))
 );
