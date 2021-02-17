@@ -69,6 +69,7 @@ const NavBar: React.FC<NavBarProps> = () => {
   const userId = user && user._id ? user._id : "";
   const profilePicture = useSelector(getProfilePicture)(userId);
   const friendRequest = useSelector(getFriends)(userId);
+  const [friendRequestBadge, setFriendRequestBadge] = useState<number>(0);
   const [name] = useState<string>(user && user.fullName ? user.fullName : "");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<IUserSearched[]>();
@@ -92,6 +93,13 @@ const NavBar: React.FC<NavBarProps> = () => {
   useEffect((): any => {
     dispatch(loadFriendRequestNotifications());
   }, [dispatch]);
+
+  useEffect((): any => {
+    if (friendRequest.length > 0)
+      setFriendRequestBadge(
+        friendRequest.filter((request) => request.status === "requested").length
+      );
+  }, [friendRequest]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -241,7 +249,7 @@ const NavBar: React.FC<NavBarProps> = () => {
               </Badge>
             </IconButton> */}
             <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={friendRequest.length} color="secondary">
+              <Badge badgeContent={friendRequestBadge} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
