@@ -1,23 +1,15 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import { Router } from "@reach/router";
 import { ToastContainer } from "react-toastify";
 import PrivateRoute from "./components/common/privateRoute";
-import { loadFriends } from "./store/friends";
 import Login from "./components/login";
 import NewsFeed from "./components/newsFeed";
 import Profile from "./components/profile";
 import Root from "./components/root";
 
 function App() {
-  const dispatch = useDispatch();
-
-  useEffect((): any => {
-    dispatch(loadFriends());
-  }, [dispatch]);
-
   return (
     <div className="App">
       <ToastContainer
