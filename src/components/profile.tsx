@@ -19,10 +19,13 @@ import { getUserPosts, loadPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import { getProfilePicture, getCoverPhoto } from "../store/users";
 import {
+  loadFriends,
   addFriend,
   isFriends,
-  cancelFriendRequest,
   isCancelled,
+  isAccepted,
+  getFriends,
+  cancelFriendRequest,
   isAddFriendRequested,
   confirmFriendRequest,
 } from "../store/friends";
@@ -94,6 +97,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const isFriendsSelector = useSelector(isFriends);
   const isAddFriendRequestedSelector = useSelector(isAddFriendRequested);
   const isFriendRequestCancelled = useSelector(isCancelled);
+  const isFriendRequestAccepted = useSelector(isAccepted);
   const [openModal, setOpenModal] = useState(false);
   const [openEditProfileModal, setopenEditProfileModal] = useState(false);
   const [friendData, setFriendData] = useState<IFriendRequest>();
@@ -105,6 +109,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     dispatch(loadImages());
     dispatch(loadLikes());
     dispatch(loadUsers());
+    dispatch(loadFriends());
   }, [dispatch]);
 
   useEffect((): any => {
@@ -130,6 +135,10 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
       setCancelledRequest(isFriendRequestCancelled(friendData._id));
   }, [friendData, isFriendRequestCancelled]);
 
+  useEffect((): any => {
+    if (friendData) setFriendData(isFriendRequestAccepted(friendData._id));
+  }, [friendData, isFriendRequestAccepted]);
+
   const handleEditProfile = () => {
     setopenEditProfileModal(true);
   };
@@ -154,24 +163,6 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   };
 
   const displayAddFriendButton = () => {
-    if (friendData && friendData.requester === userId) {
-      return (
-        <Grid container justify="flex-end" className={classes.responseButtons}>
-          <Button
-            color="primary"
-            size="small"
-            variant="contained"
-            onClick={handleConfirmFriendRequest}
-          >
-            Confirm request
-          </Button>
-          <Button color="secondary" size="small" variant="contained">
-            Delete request
-          </Button>
-        </Grid>
-      );
-    }
-
     if (friendData && !cancelledRequest) {
       return (
         <Grid container justify="flex-end">
@@ -188,30 +179,82 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     }
 
     if (friendData) {
-      return friendData.status !== "requested" ? (
-        <Grid container justify="flex-end">
-          <Button
-            color="primary"
-            variant="contained"
-            startIcon={<PersonAddIcon />}
-            onClick={handleAddFriend}
+      if (
+        friendData.requester === userId &&
+        friendData.status === "requested"
+      ) {
+        return (
+          <Grid
+            container
+            justify="flex-end"
+            className={classes.responseButtons}
           >
-            Add Friend
-          </Button>
-        </Grid>
-      ) : (
-        <Grid container justify="flex-end">
-          <Button
-            color="primary"
-            variant="contained"
-            startIcon={<CancelIcon />}
-            onClick={handleCancelFriendRequest}
-          >
-            Cancel friend request
-          </Button>
-        </Grid>
-      );
+            <Button
+              color="primary"
+              size="small"
+              variant="contained"
+              onClick={handleConfirmFriendRequest}
+            >
+              Confirm request
+            </Button>
+            <Button
+              color="secondary"
+              size="small"
+              variant="contained"
+              onClick={handleCancelFriendRequest}
+            >
+              Delete request
+            </Button>
+          </Grid>
+        );
+      } else if (
+        (friendData.requester === userId || friendData.recipient === userId) &&
+        friendData.status === "accepted"
+      ) {
+        return (
+          <Grid container justify="flex-end">
+            <Button
+              color="primary"
+              variant="contained"
+              startIcon={<CancelIcon />}
+              onClick={handleCancelFriendRequest}
+            >
+              Unfriend
+            </Button>
+          </Grid>
+        );
+      } else if (
+        friendData.requester === userId &&
+        friendData.status !== "requested"
+      ) {
+        return (
+          <Grid container justify="flex-end">
+            <Button
+              color="primary"
+              variant="contained"
+              startIcon={<PersonAddIcon />}
+              onClick={handleAddFriend}
+            >
+              Add Friend
+            </Button>
+          </Grid>
+        );
+      } else {
+        return (
+          <Grid container justify="flex-end">
+            <Button
+              color="primary"
+              variant="contained"
+              startIcon={<CancelIcon />}
+              onClick={handleCancelFriendRequest}
+            >
+              Cancel friend request
+            </Button>
+          </Grid>
+        );
+      }
     }
+
     return (
       <Grid container justify="flex-end">
         <Button
