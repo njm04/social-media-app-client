@@ -27,6 +27,7 @@ import { getInitials, getProfileName } from "./../../utils/utils";
 import { getProfilePicture } from "../../store/users";
 import { IUserSearched } from "../../interfaces/users";
 import { search } from "../../services/searchFriendService";
+import Notifications from "../common/notifications";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -140,6 +141,10 @@ const NavBar: React.FC<NavBarProps> = () => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const friendRequestNotifications = () => {
+    return friendRequest.filter((request) => request.status === "requested");
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -248,11 +253,10 @@ const NavBar: React.FC<NavBarProps> = () => {
                 <MailIcon />
               </Badge>
             </IconButton> */}
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={friendRequestBadge} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <Notifications
+              friendRequest={friendRequestNotifications()}
+              friendRequestBadge={friendRequestBadge}
+            />
             <IconButton
               edge="end"
               aria-label="account of current user"
