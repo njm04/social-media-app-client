@@ -16,7 +16,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Search from "./search";
 import { useDispatch, useSelector } from "react-redux";
-import { userLoggedOut, getUser } from "../../store/auth";
+import { userLoggedOut, getUser, logout } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
 import {
   getFriends,
@@ -133,7 +133,7 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   const handleLogout = () => {
     auth.logout();
-    dispatch(userLoggedOut({}));
+    dispatch(logout(userId));
     navigate("/");
   };
 
