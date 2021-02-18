@@ -59,6 +59,17 @@ export const login = (user: object) => {
   });
 };
 
+export const logout = (userId: string) => {
+  return apiCallBegan({
+    url: `${url}/logout/${userId}`,
+    method: "PATCH",
+    data: userId,
+    onStart: authRequested.type,
+    onSuccess: userLoggedOut.type,
+    onError: authFailed.type,
+  });
+};
+
 // TODO: replace type any with the correct types
 export const getUser = createSelector(
   (state: any) => state.entities.auth,
