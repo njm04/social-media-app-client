@@ -16,7 +16,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Search from "./search";
 import { useDispatch, useSelector } from "react-redux";
-import { userLoggedOut, getUser, logout } from "../../store/auth";
+import { getUser, logout } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
 import {
   getFriends,
@@ -58,6 +58,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     userName: {
       marginLeft: "10px",
+    },
+    customBadge: {
+      backgroundColor: "#91ff35",
     },
   })
 );
@@ -240,9 +243,31 @@ const NavBar: React.FC<NavBarProps> = () => {
               onClick={handleProfileOpen}
             >
               {profilePicture ? (
-                <Avatar alt={profilePicture.name} src={profilePicture.url} />
+                <Badge
+                  classes={{ badge: classes.customBadge }}
+                  overlap="circle"
+                  badgeContent=" "
+                  variant="dot"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                >
+                  <Avatar alt={profilePicture.name} src={profilePicture.url} />
+                </Badge>
               ) : (
-                <Avatar>{getInitials(name)}</Avatar>
+                <Badge
+                  classes={{ badge: classes.customBadge }}
+                  overlap="circle"
+                  badgeContent=" "
+                  variant="dot"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                >
+                  <Avatar>{getInitials(name)}</Avatar>
+                </Badge>
               )}
               <Typography variant="h6" className={classes.userName}>
                 {user && user.firstName}
