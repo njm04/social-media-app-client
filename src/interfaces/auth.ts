@@ -6,6 +6,7 @@ export interface IAuthUser {
   firstName?: string;
   lastName?: string;
   fullName?: string;
+  status?: string;
   profilePicture?: IProfPic;
   exp?: number;
   iat?: number;
