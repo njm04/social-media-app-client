@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: "10px",
     },
     customBadge: {
-      backgroundColor: "#91ff35",
+      backgroundColor: "#44b700",
     },
   })
 );
