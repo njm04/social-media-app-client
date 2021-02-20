@@ -17,14 +17,17 @@ import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import CancelIcon from "@material-ui/icons/Cancel";
 import { getUserPosts, loadPosts } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
-import { getProfilePicture, getCoverPhoto } from "../store/users";
+import {
+  getProfilePicture,
+  getCoverPhoto,
+  getUser as getUserInfo,
+} from "../store/users";
 import {
   loadFriends,
   addFriend,
   isFriends,
   isCancelled,
   isAccepted,
-  getFriends,
   cancelFriendRequest,
   isAddFriendRequested,
   confirmFriendRequest,
@@ -39,6 +42,7 @@ import EditPostModal from "./editPostModal";
 import PostCard from "./common/postCards";
 import EditProfileModal from "./editProfileModal";
 import PostField from "./common/postField";
+import StyledBadge from "./common/styledBadge";
 
 export interface ProfileProps {
   location: any;
@@ -90,6 +94,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const images = useSelector(getImages);
   const user = location.state.userData;
   const userId = user._id;
+  const userInfo = useSelector(getUserInfo)(userId);
   const loggedInUser: IAuthUser | null = useSelector(getUser);
   const userPosts = useSelector(getUserPosts)(userId);
   const profilePicture = useSelector(getProfilePicture)(userId);
@@ -283,6 +288,11 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     }
   };
 
+  const isOnline = () => {
+    if (userInfo && userInfo.status === "active") return false;
+    return true;
+  };
+
   return (
     <>
       <CssBaseline />
@@ -302,15 +312,27 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                 {displayCoverPhoto()}
                 <Box zIndex="app bar" position="absolute">
                   {profilePicture ? (
-                    <Avatar
-                      className={classes.avatar}
-                      alt={profilePicture.name}
-                      src={profilePicture.url}
-                    />
+                    <StyledBadge
+                      overlap="circle"
+                      invisible={isOnline()}
+                      variant="dot"
+                    >
+                      <Avatar
+                        className={classes.avatar}
+                        alt={profilePicture.name}
+                        src={profilePicture.url}
+                      />
+                    </StyledBadge>
                   ) : (
-                    <Avatar className={classes.avatar}>
-                      {getInitials(user.fullName)}
-                    </Avatar>
+                    <StyledBadge
+                      overlap="circle"
+                      invisible={isOnline()}
+                      variant="dot"
+                    >
+                      <Avatar className={classes.avatar}>
+                        {getInitials(user.fullName)}
+                      </Avatar>
+                    </StyledBadge>
                   )}
                 </Box>
               </Box>
