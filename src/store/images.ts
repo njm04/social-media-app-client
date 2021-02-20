@@ -77,6 +77,7 @@ export const loadImages = () => {
   });
 };
 
+// this action creator has not been used yet
 export const addImages = (data: object) => {
   return apiCallBegan({
     url,
@@ -88,7 +89,7 @@ export const addImages = (data: object) => {
   });
 };
 
-// prepared for future use.
+// this action creator has not been used yet
 export const updateCoverPhoto = (userId: string, imageData: IImageData) => {
   return apiCallBegan({
     url: `${url}/${userId}`,
