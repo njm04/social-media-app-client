@@ -78,6 +78,7 @@ export const addLike = (data: object) => {
   });
 };
 
+// this action creator has not been used yet
 export const deleteLike = (data: object) => {
   return apiCallBegan({
     url,
