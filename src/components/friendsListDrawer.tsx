@@ -82,7 +82,11 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = () => {
                     >
                       <Avatar
                         alt={friend.fullName}
-                        src={friend.profilePicture.url}
+                        src={
+                          friend.profilePicture && friend.profilePicture.url
+                            ? friend.profilePicture.url
+                            : ""
+                        }
                       />
                     </StyledBadge>
                   </ListItemAvatar>
