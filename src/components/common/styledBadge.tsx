@@ -6,8 +6,8 @@ const StyledBadge = withStyles((theme: Theme) =>
     badge: {
       marginTop: 330,
       backgroundColor: "#44b700",
-      height: 20,
-      width: 20,
+      // height: 20,
+      // width: 20,
       borderRadius: "50%",
       color: "#44b700",
       boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
