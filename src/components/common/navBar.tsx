@@ -34,6 +34,9 @@ const useStyles = makeStyles((theme: Theme) =>
     grow: {
       flexGrow: 1,
     },
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+    },
     menuButton: {
       marginRight: theme.spacing(2),
     },
@@ -208,7 +211,7 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="fixed">
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
             edge="start"
