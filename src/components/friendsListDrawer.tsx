@@ -53,46 +53,50 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = () => {
     return true;
   };
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <Drawer
-        className={classes.drawer}
-        variant="permanent"
-        anchor="right"
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <Toolbar />
-        <div className={classes.drawerContainer}>
-          <List>
-            {friends.map((friend) => (
-              <ListItem button key={friend._id}>
-                <ListItemAvatar>
-                  <StyledBadge
-                    overlap="circle"
-                    invisible={isOnline(friend.status)}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    variant="dot"
-                  >
-                    <Avatar
-                      alt={friend.fullName}
-                      src={friend.profilePicture.url}
-                    />
-                  </StyledBadge>
-                </ListItemAvatar>
-                <ListItemText primary={friend.fullName} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      </Drawer>
-    </div>
-  );
+  if (friends.length > 0) {
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <Drawer
+          className={classes.drawer}
+          variant="permanent"
+          anchor="right"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <Toolbar />
+          <div className={classes.drawerContainer}>
+            <List>
+              {friends.map((friend) => (
+                <ListItem button key={friend._id}>
+                  <ListItemAvatar>
+                    <StyledBadge
+                      overlap="circle"
+                      invisible={isOnline(friend.status)}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      variant="dot"
+                    >
+                      <Avatar
+                        alt={friend.fullName}
+                        src={friend.profilePicture.url}
+                      />
+                    </StyledBadge>
+                  </ListItemAvatar>
+                  <ListItemText primary={friend.fullName} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        </Drawer>
+      </div>
+    );
+  } else {
+    return null;
+  }
 };
 
 export default FriendsListDrawer;
