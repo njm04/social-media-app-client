@@ -1,3 +1,5 @@
+import { IProfPic } from "./profPic";
+
 export interface IFriendRequest {
   _id: string;
   requester: string;
@@ -8,4 +10,11 @@ export interface IFriendRequest {
 export interface IIsFriends {
   requester: string;
   recipient: string;
+}
+
+export interface IAcceptedFriend {
+  _id: string;
+  fullName: string;
+  profilePicture: IProfPic;
+  status: string;
 }
