@@ -1,19 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { memoize } from "lodash";
-import { IFriendRequest, IIsFriends } from "../interfaces/friends";
+import {
+  IFriendRequest,
+  IIsFriends,
+  IAcceptedFriend,
+} from "../interfaces/friends";
 import { apiCallBegan } from "./api";
 
 const url = "/friends";
 
 interface FriendSliceState {
   list: IFriendRequest[];
+  acceptedFriends: IAcceptedFriend[];
   notifications: IFriendRequest[];
   loading: boolean;
 }
 
 const initialState: FriendSliceState = {
   list: [],
+  acceptedFriends: [],
   notifications: [],
   loading: false,
 };
@@ -30,6 +36,13 @@ const slice = createSlice({
     },
     friendsReceived: (friends, action: PayloadAction<IFriendRequest[]>) => {
       friends.list = action.payload;
+      friends.loading = false;
+    },
+    acceptedFriendsReceived: (
+      friends,
+      action: PayloadAction<IAcceptedFriend[]>
+    ) => {
+      friends.acceptedFriends = action.payload;
       friends.loading = false;
     },
     friendRequestNotificationsReceived: (
@@ -77,6 +90,7 @@ const {
   friendRequestCancelled,
   friendRequestNotificationsReceived,
   friendRequestResponse,
+  acceptedFriendsReceived,
 } = slice.actions;
 export default slice.reducer;
 
@@ -92,6 +106,16 @@ export const loadFriends = () => {
     method: "GET",
     onStart: friendsRequested.type,
     onSuccess: friendsReceived.type,
+    onError: addFriendRequested.type,
+  });
+};
+
+export const loadAcceptedFriends = () => {
+  return apiCallBegan({
+    url: `${url}/accepted`,
+    method: "GET",
+    onStart: friendsRequested.type,
+    onSuccess: acceptedFriendsReceived.type,
     onError: addFriendRequested.type,
   });
 };
@@ -179,4 +203,9 @@ export const isAccepted = createSelector(
   (state: any) => state.entities.friends.list,
   (friends: IFriendRequest[]) =>
     memoize((id: string) => friends.find((request) => request._id === id))
+);
+
+export const getAcceptedFriends = createSelector(
+  (state: any) => state.entities.friends.acceptedFriends,
+  (friends: IAcceptedFriend[]) => friends
 );

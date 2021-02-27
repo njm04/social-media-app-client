@@ -10,6 +10,7 @@ import { IAuthUser } from "../interfaces/auth";
 import Post from "./post";
 import PostCard from "./common/postCards";
 import EditPostModal from "./editPostModal";
+import FriendsListDrawer from "./friendsListDrawer";
 
 export interface NewsFeedProps extends RouteComponentProps {}
 
@@ -44,6 +45,7 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
           setOpenModal={setOpenModal}
         />
       </Container>
+      <FriendsListDrawer />
       <EditPostModal open={openModal} setOpenModal={setOpenModal} postId={id} />
     </>
   );
