@@ -168,8 +168,12 @@ export const isFriends = createSelector(
     memoize((data: IIsFriends) =>
       friends.find(
         (friend) =>
-          friend.requester === data.requester &&
-          friend.recipient === data.recipient
+          (friend.requester === data.requester &&
+            friend.recipient === data.recipient &&
+            friend.status === "accepted") ||
+          (friend.requester === data.recipient &&
+            friend.recipient === data.requester &&
+            friend.status === "accepted")
       )
     )
 );
