@@ -46,7 +46,14 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = () => {
   const dispatch = useDispatch();
   const friends = useSelector(getAcceptedFriends);
 
-  useEffect((): any => dispatch(loadAcceptedFriends()), [dispatch]);
+  useEffect((): any => {
+    dispatch(loadAcceptedFriends());
+    // to check for accepted friend status
+    setInterval(() => {
+      console.log("running every minute");
+      dispatch(loadAcceptedFriends());
+    }, 60000);
+  }, [dispatch]);
 
   const isOnline = (status: string) => {
     if (status === "active") return false;
