@@ -99,13 +99,20 @@ const NavBar: React.FC<NavBarProps> = () => {
 
   useEffect((): any => {
     dispatch(loadFriendRequestNotifications());
+    setTimeout(() => {
+      console.log("notifications being run every minute");
+      dispatch(loadFriendRequestNotifications());
+    }, 60000);
   }, [dispatch]);
 
   useEffect((): any => {
-    if (friendRequest.length > 0)
+    if (friendRequest.length > 0) {
       setFriendRequestBadge(
         friendRequest.filter((request) => request.status === "requested").length
       );
+    } else {
+      setFriendRequestBadge(0);
+    }
   }, [friendRequest]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
