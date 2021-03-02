@@ -169,11 +169,9 @@ export const isFriends = createSelector(
       friends.find(
         (friend) =>
           (friend.requester === data.requester &&
-            friend.recipient === data.recipient &&
-            friend.status === "accepted") ||
+            friend.recipient === data.recipient) ||
           (friend.requester === data.recipient &&
-            friend.recipient === data.requester &&
-            friend.status === "accepted")
+            friend.recipient === data.requester)
       )
     )
 );
@@ -184,8 +182,12 @@ export const isAddFriendRequested = createSelector(
     memoize((data: IIsFriends) =>
       friends.find(
         (friend) =>
-          friend.requester === data.requester &&
-          friend.recipient === data.recipient
+          (friend.requester === data.requester &&
+            friend.recipient === data.recipient &&
+            friend.status === "requested") ||
+          (friend.requester === data.recipient &&
+            friend.recipient === data.requester &&
+            friend.status === "requested")
       )
     )
 );
