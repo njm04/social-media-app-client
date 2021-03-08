@@ -23,12 +23,14 @@ const useStyles = makeStyles((theme: Theme) =>
       top: "auto",
       bottom: 0,
       zIndex: theme.zIndex.drawer + 1,
+      height: 0,
     },
     grow: {
       flexGrow: 1,
     },
     chatBox: {
       marginLeft: 5,
+      marginBottom: 580,
     },
     toolbar: {
       marginLeft: "auto",
