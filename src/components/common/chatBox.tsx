@@ -207,12 +207,22 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       className={classes.minimizedChatBox}
       onClick={toggleMinimize}
     >
-      <Avatar
-        aria-label="avatar"
-        className={classes.avatar}
-        src={friendData.profilePicture && friendData.profilePicture.url}
-        alt={friendData.fullName}
-      />
+      <StyledBadge
+        overlap="circle"
+        invisible={isOnline(friendData.status)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        variant="dot"
+      >
+        <Avatar
+          aria-label="avatar"
+          className={classes.avatar}
+          src={friendData.profilePicture && friendData.profilePicture.url}
+          alt={friendData.fullName}
+        />
+      </StyledBadge>
     </IconButton>
   );
 };
