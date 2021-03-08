@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps } from "@reach/router";
 import { loadPosts, getAllPosts } from "../store/posts";
@@ -7,20 +8,45 @@ import Container from "@material-ui/core/Container";
 import { loadLikes } from "../store/likes";
 import { getUser } from "../store/auth";
 import { IAuthUser } from "../interfaces/auth";
+import { IAcceptedFriend } from "../interfaces/friends";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import Post from "./post";
 import PostCard from "./common/postCards";
 import EditPostModal from "./editPostModal";
 import FriendsListDrawer from "./friendsListDrawer";
+import Chat from "./common/chatBox";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    appBar: {
+      top: "auto",
+      bottom: 0,
+      zIndex: theme.zIndex.drawer + 1,
+    },
+    grow: {
+      flexGrow: 1,
+    },
+    chatBox: {
+      marginLeft: 5,
+    },
+    toolbar: {
+      marginLeft: "auto",
+    },
+  })
+);
 
 export interface NewsFeedProps extends RouteComponentProps {}
 
 const NewsFeed: React.FC<NewsFeedProps> = () => {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
   const posts = useSelector(getAllPosts);
   const images = useSelector(getImages);
   const [id, setPostId] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const [friendData, setFriendData] = useState<IAcceptedFriend[]>([]);
 
   useEffect((): any => {
     dispatch(loadPosts());
@@ -45,8 +71,25 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
           setOpenModal={setOpenModal}
         />
       </Container>
-      <FriendsListDrawer />
+      <FriendsListDrawer setFriendData={setFriendData} />
       <EditPostModal open={openModal} setOpenModal={setOpenModal} postId={id} />
+      <AppBar
+        position="fixed"
+        color="transparent"
+        elevation={0}
+        className={classes.appBar}
+      >
+        <Toolbar className={classes.toolbar}>
+          {friendData.map(
+            (data) =>
+              friendData.length > 0 && (
+                <div className={classes.chatBox} key={data._id}>
+                  <Chat friendData={data} setFriendData={setFriendData} />
+                </div>
+              )
+          )}
+        </Toolbar>
+      </AppBar>
     </>
   );
 };
