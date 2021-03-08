@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
+import { red } from "@material-ui/core/colors";
 import List from "@material-ui/core/List";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import Divider from "@material-ui/core/Divider";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -14,14 +13,12 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
-import { red } from "@material-ui/core/colors";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import TextField from "@material-ui/core/TextField";
 import SendIcon from "@material-ui/icons/Send";
-import { IAcceptedFriend } from "../../interfaces/friends";
 import StyledBadge from "./styledBadge";
 import MinimizeIcon from "@material-ui/icons/Minimize";
 import CloseIcon from "@material-ui/icons/Close";
+import { IAcceptedFriend } from "../../interfaces/friends";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +45,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "white",
       border: "1px solid",
     },
+    minimizedChatBox: {
+      marginTop: 450,
+    },
   })
 );
 
@@ -61,6 +61,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   setFriendData,
 }: ChatBoxProps) => {
   const classes = useStyles();
+  const [minimize, setMinimize] = useState(false);
 
   const isOnline = (status: string) => {
     if (status === "active") return false;
@@ -75,7 +76,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     });
   };
 
-  return (
+  const toggleMinimize = () => {
+    setMinimize(minimize ? false : true);
+  };
+
+  return !minimize ? (
     <Card className={classes.root} variant="outlined">
       <CardHeader
         className={classes.cardHeader}
@@ -91,7 +96,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             variant="dot"
           >
             <Avatar
-              aria-label="recipe"
+              aria-label="avatar"
               className={classes.avatar}
               src={friendData.profilePicture && friendData.profilePicture.url}
               alt={friendData.fullName}
@@ -100,7 +105,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         }
         action={
           <>
-            <IconButton aria-label="minimize" size="small">
+            <IconButton
+              aria-label="minimize"
+              size="small"
+              onClick={toggleMinimize}
+            >
               <MinimizeIcon />
             </IconButton>
             <IconButton aria-label="close" size="small" onClick={handleClose}>
@@ -192,6 +201,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         </IconButton>
       </CardActions>
     </Card>
+  ) : (
+    <IconButton
+      aria-label="minimize"
+      className={classes.minimizedChatBox}
+      onClick={toggleMinimize}
+    >
+      <Avatar
+        aria-label="avatar"
+        className={classes.avatar}
+        src={friendData.profilePicture && friendData.profilePicture.url}
+        alt={friendData.fullName}
+      />
+    </IconButton>
   );
 };
 
