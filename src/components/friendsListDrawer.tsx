@@ -11,6 +11,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import { loadAcceptedFriends, getAcceptedFriends } from "../store/friends";
 import StyledBadge from "./common/styledBadge";
+import { IAcceptedFriend } from "../interfaces/friends";
 
 const drawerWidth = 240;
 
@@ -39,9 +40,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export interface FriendsListDrawerProps {}
+export interface FriendsListDrawerProps {
+  setFriendData: React.Dispatch<React.SetStateAction<IAcceptedFriend[]>>;
+}
 
-const FriendsListDrawer: React.FC<FriendsListDrawerProps> = () => {
+const FriendsListDrawer: React.FC<FriendsListDrawerProps> = ({
+  setFriendData,
+}: FriendsListDrawerProps) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const friends = useSelector(getAcceptedFriends);
@@ -54,6 +59,13 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = () => {
       dispatch(loadAcceptedFriends());
     }, 60000);
   }, [dispatch]);
+
+  const handleClick = (friend: IAcceptedFriend) => {
+    setFriendData((friendData) => {
+      if (!friendData.includes(friend)) return [...friendData, friend];
+      return friendData;
+    });
+  };
 
   const isOnline = (status: string) => {
     if (status === "active") return false;
@@ -76,7 +88,11 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = () => {
           <div className={classes.drawerContainer}>
             <List>
               {friends.map((friend) => (
-                <ListItem button key={friend._id}>
+                <ListItem
+                  button
+                  key={friend._id}
+                  onClick={() => handleClick(friend)}
+                >
                   <ListItemAvatar>
                     <StyledBadge
                       overlap="circle"
