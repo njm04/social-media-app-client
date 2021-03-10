@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import { red } from "@material-ui/core/colors";
 import List from "@material-ui/core/List";
@@ -18,6 +18,7 @@ import SendIcon from "@material-ui/icons/Send";
 import StyledBadge from "./styledBadge";
 import MinimizeIcon from "@material-ui/icons/Minimize";
 import CloseIcon from "@material-ui/icons/Close";
+import Tooltip from "@material-ui/core/Tooltip";
 import { IAcceptedFriend } from "../../interfaces/friends";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -48,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
     minimizedChatBox: {
       marginTop: 450,
     },
+    cardContentMessages: { height: 300, overflow: "auto" },
   })
 );
 
@@ -120,7 +122,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         title={friendData.fullName}
         subheader={friendData.status === "active" ? "active now" : ""}
       />
-      <CardContent>
+      <CardContent className={classes.cardContentMessages}>
         <List className={classes.root}>
           <ListItem alignItems="flex-start">
             <ListItemAvatar>
@@ -202,28 +204,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       </CardActions>
     </Card>
   ) : (
-    <IconButton
-      aria-label="minimize"
-      className={classes.minimizedChatBox}
-      onClick={toggleMinimize}
-    >
-      <StyledBadge
-        overlap="circle"
-        invisible={isOnline(friendData.status)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        variant="dot"
+    <Tooltip title={friendData.fullName} placement="top" arrow>
+      <IconButton
+        aria-label="minimize"
+        className={classes.minimizedChatBox}
+        onClick={toggleMinimize}
       >
-        <Avatar
-          aria-label="avatar"
-          className={classes.avatar}
-          src={friendData.profilePicture && friendData.profilePicture.url}
-          alt={friendData.fullName}
-        />
-      </StyledBadge>
-    </IconButton>
+        <StyledBadge
+          overlap="circle"
+          invisible={isOnline(friendData.status)}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          variant="dot"
+        >
+          <Avatar
+            aria-label="avatar"
+            className={classes.avatar}
+            src={friendData.profilePicture && friendData.profilePicture.url}
+            alt={friendData.fullName}
+          />
+        </StyledBadge>
+      </IconButton>
+    </Tooltip>
   );
 };
 
