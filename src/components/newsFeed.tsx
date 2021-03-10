@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     chatBox: {
       marginLeft: 5,
-      marginBottom: 580,
+      marginBottom: 500,
     },
     toolbar: {
       marginLeft: "auto",
