@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
-import { useDispatch, useSelector } from "react-redux";
-import { red } from "@material-ui/core/colors";
+import { useSelector } from "react-redux";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Divider from "@material-ui/core/Divider";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -67,18 +63,6 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface ChatBoxProps {
   friendData: IAcceptedFriend;
   setFriendData: React.Dispatch<React.SetStateAction<IAcceptedFriend[]>>;
-}
-
-interface ISentBy {
-  id: string;
-  fullName: string;
-}
-
-interface IMessage {
-  message: string;
-  createdAt: string;
-  sentBy: ISentBy;
-  participants: string[];
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({
