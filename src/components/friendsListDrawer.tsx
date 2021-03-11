@@ -54,6 +54,7 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = ({
   useEffect((): any => {
     dispatch(loadAcceptedFriends());
     // to check for accepted friend status
+    //TODO: fix interval still running after logout
     setInterval(() => {
       console.log("running every minute");
       dispatch(loadAcceptedFriends());
