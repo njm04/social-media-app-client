@@ -23,6 +23,16 @@ export interface IUser {
   coverPhoto: IProfPic;
 }
 
+export interface IRegisterUser {
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  email: string;
+  birthDate: Date;
+  gender: string;
+  password: string;
+}
+
 export interface IUserSearched {
   _id: string;
   fullName: string;
