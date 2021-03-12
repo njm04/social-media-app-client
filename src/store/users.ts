@@ -3,7 +3,7 @@ import { memoize } from "lodash";
 import { toast } from "react-toastify";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
-import { IUser } from "../interfaces/users";
+import { IUser, IRegisterUser } from "../interfaces/users";
 import { IProfPic } from "../interfaces/profPic";
 
 const url = "/users";
@@ -46,6 +46,11 @@ const slice = createSlice({
       users.loading = false;
       toast.dark("You've updated your cover photo.");
     },
+    userRegistered: (users, action: PayloadAction<IUser>) => {
+      users.list.push(action.payload);
+      users.loading = false;
+      toast.success("You've successfully created a new account. ");
+    },
   },
 });
 
@@ -55,6 +60,7 @@ const {
   usersReceived,
   userProfPicUpdated,
   userCoverPhotoUpdated,
+  userRegistered,
 } = slice.actions;
 export default slice.reducer;
 
@@ -64,6 +70,25 @@ export const loadUsers = () => {
     method: "GET",
     onStart: usersRequested.type,
     onSuccess: usersReceived.type,
+    onError: usersFailed.type,
+  });
+};
+
+export const registerUser = (data: IRegisterUser) => {
+  const payload = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    password: data.password,
+    gender: data.gender,
+    birthDate: data.birthDate.getTime(),
+  };
+  return apiCallBegan({
+    url: `${url}/register`,
+    method: "POST",
+    data: payload,
+    onStart: usersRequested.type,
+    onSuccess: userRegistered.type,
     onError: usersFailed.type,
   });
 };

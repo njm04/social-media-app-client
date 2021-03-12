@@ -16,6 +16,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Copyright from "./common/copyRight";
+import Register from "./register";
 import { authReceived, login } from "../store/auth";
 import auth from "../services/authService";
 import http from "../services/httpService";
@@ -46,6 +47,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +65,10 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
     http.setJwt(auth.getJwt());
     dispatch(authReceived(auth.getCurrentUser()));
     navigate("/news-feed");
+  };
+
+  const handleRegister = () => {
+    setOpen(true);
   };
 
   if (auth.getCurrentUser()) return <Redirect to="/news-feed" noThrow />;
@@ -102,10 +108,10 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
             autoComplete="current-password"
             onChange={handleChangePassword}
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth
@@ -115,14 +121,14 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
           >
             Sign In
           </Button>
-          <Grid container>
-            <Grid item xs>
+          <Grid container direction="row" justify="center" alignItems="center">
+            {/* <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
               </Link>
-            </Grid>
+            </Grid> */}
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="#" variant="body2" onClick={handleRegister}>
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
@@ -132,6 +138,7 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <Register open={open} setOpen={setOpen} />
     </Container>
   );
 };
