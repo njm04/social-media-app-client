@@ -101,10 +101,10 @@ const NavBar: React.FC<NavBarProps> = () => {
   useEffect((): any => {
     dispatch(loadFriendRequestNotifications());
     //TODO: fix timeOut still running after logout
-    setTimeout(() => {
-      console.log("notifications being run every minute");
-      dispatch(loadFriendRequestNotifications());
-    }, 60000);
+    // setTimeout(() => {
+    //   console.log("notifications being run every minute");
+    //   dispatch(loadFriendRequestNotifications());
+    // }, 60000);
   }, [dispatch]);
 
   useEffect((): any => {
