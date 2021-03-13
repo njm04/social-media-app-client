@@ -18,7 +18,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import { registerUser } from "../store/users";
 import { IRegisterUser } from "../interfaces/users";
-import { registrationValiditionSchema } from "../validation/registration";
+import registrationValiditionSchema from "../validation/registration";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const useStyles = makeStyles((theme: Theme) => ({
