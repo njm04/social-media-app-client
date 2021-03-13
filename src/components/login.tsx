@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { navigate, Redirect } from "@reach/router";
 import { RouteComponentProps } from "@reach/router";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -20,6 +22,7 @@ import Register from "./register";
 import { authReceived, login } from "../store/auth";
 import auth from "../services/authService";
 import http from "../services/httpService";
+import loginValidationSchema from "../validation/login";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -43,25 +46,28 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface LoginProps extends RouteComponentProps {}
 
-const Login: React.FC<LoginProps> = (props: LoginProps) => {
+const defaultValues = {
+  email: "",
+  password: "",
+};
+
+type LoginFields = {
+  email: string;
+  password: string;
+};
+
+const Login: React.FC<LoginProps> = () => {
   const classes = useStyles();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
 
-  const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
+  const { control, errors, handleSubmit } = useForm<LoginFields>({
+    defaultValues,
+    resolver: yupResolver(loginValidationSchema),
+  });
 
-  const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: fix "await has no effect on the type of this expression"
-    await dispatch(login({ email, password }));
+  const onSubmit: SubmitHandler<LoginFields> = async (data) => {
+    await dispatch(login(data));
     http.setJwt(auth.getJwt());
     dispatch(authReceived(auth.getCurrentUser()));
     navigate("/news-feed");
@@ -83,30 +89,48 @@ const Login: React.FC<LoginProps> = (props: LoginProps) => {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <Controller
+            control={control}
             name="email"
-            autoComplete="email"
-            autoFocus
-            onChange={handleChangeEmail}
+            as={
+              <TextField
+                error={errors.email ? true : false}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                helperText={errors.email ? errors.email.message : ""}
+              />
+            }
           />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
+          <Controller
+            control={control}
             name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={handleChangePassword}
+            as={
+              <TextField
+                error={errors.password ? true : false}
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                helperText={errors.password ? errors.password.message : ""}
+              />
+            }
           />
           {/* <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
