@@ -15,7 +15,7 @@
 /.vscode
 
 # firebase config
-/src/firebase.config.ts
+#/src/firebase.config.ts
 
 # misc
 .DS_Store
