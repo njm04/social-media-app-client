@@ -14,8 +14,8 @@
 # vscode settings
 /.vscode
 
-# firebase config
-#/src/firebase.config.ts
+# firebase config should be ignore on development
+/src/firebase.config.ts
 
 # misc
 .DS_Store
