@@ -301,11 +301,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions>
+        {/* <DialogActions>
           <Button autoFocus color="primary">
             Save changes
           </Button>
-        </DialogActions>
+        </DialogActions> */}
       </Dialog>
     </div>
   );
