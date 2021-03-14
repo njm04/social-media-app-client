@@ -74,7 +74,7 @@ const Search: React.FC<SearchProps> = ({
         <SearchIcon />
       </div>
       <InputBase
-        placeholder="Search…"
+        placeholder="Search people..."
         value={searchQuery}
         classes={{
           root: classes.inputRoot,
