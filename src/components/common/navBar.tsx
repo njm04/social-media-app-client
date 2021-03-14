@@ -240,7 +240,7 @@ const NavBar: React.FC<NavBarProps> = () => {
               navigate("/news-feed");
             }}
           >
-            Facebook-Clone
+            People Connects
           </Typography>
           <Search
             handleSearch={handleSearch}
