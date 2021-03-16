@@ -9,7 +9,7 @@ import PhotoIcon from "@material-ui/icons/Photo";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import { createPost } from "../../store/posts";
+import { createPost, isLoading } from "../../store/posts";
 import { getUser } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
 import { IImageData } from "../../interfaces/images";
@@ -49,12 +49,13 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const user: IAuthUser | null = useSelector(getUser);
+  const loading = useSelector(isLoading);
   const [post, setPost] = useState("");
   const [images, setImages] = useState<IImageData[]>([]);
   const [imageData, setImageData] = useState<object[]>([]);
 
   const isDisabled = () => {
-    if (!post && imageData.length === 0) return true;
+    if ((!post && imageData.length === 0) || loading) return true;
     return false;
   };
 
@@ -145,6 +146,7 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
       <Card className={root}>
         <CardContent>
           <TextField
+            disabled={loading}
             id="outlined-basic"
             multiline
             variant="outlined"
@@ -168,6 +170,7 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
               />
               <label htmlFor="post-uploads">
                 <Button
+                  disabled={loading}
                   // variant="contained"
                   color="primary"
                   component="span"
