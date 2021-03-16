@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { navigate, Redirect } from "@reach/router";
 import { RouteComponentProps } from "@reach/router";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
@@ -10,6 +10,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
@@ -19,7 +20,7 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Copyright from "./common/copyRight";
 import Register from "./register";
-import { authReceived, login } from "../store/auth";
+import { authReceived, login, isLoading } from "../store/auth";
 import auth from "../services/authService";
 import http from "../services/httpService";
 import loginValidationSchema from "../validation/login";
@@ -42,6 +43,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  buttonProgress: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -45,
+    marginLeft: -25,
+  },
 }));
 
 export interface LoginProps extends RouteComponentProps {}
@@ -60,7 +68,7 @@ const Login: React.FC<LoginProps> = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-
+  const loading = useSelector(isLoading);
   const { control, errors, handleSubmit } = useForm<LoginFields>({
     defaultValues,
     resolver: yupResolver(loginValidationSchema),
@@ -100,6 +108,7 @@ const Login: React.FC<LoginProps> = () => {
             as={
               <TextField
                 error={errors.email ? true : false}
+                disabled={loading}
                 variant="outlined"
                 margin="normal"
                 required
@@ -119,6 +128,7 @@ const Login: React.FC<LoginProps> = () => {
             as={
               <TextField
                 error={errors.password ? true : false}
+                disabled={loading}
                 variant="outlined"
                 margin="normal"
                 required
@@ -137,6 +147,7 @@ const Login: React.FC<LoginProps> = () => {
             label="Remember me"
           /> */}
           <Button
+            disabled={loading}
             type="submit"
             fullWidth
             variant="contained"
@@ -145,6 +156,9 @@ const Login: React.FC<LoginProps> = () => {
           >
             Sign In
           </Button>
+          {loading && (
+            <CircularProgress size={40} className={classes.buttonProgress} />
+          )}
           <Grid container direction="row" justify="center" alignItems="center">
             {/* <Grid item xs>
               <Link href="#" variant="body2">
@@ -152,9 +166,13 @@ const Login: React.FC<LoginProps> = () => {
               </Link>
             </Grid> */}
             <Grid item>
-              <Link href="#" variant="body2" onClick={handleRegister}>
-                {"Don't have an account? Sign Up"}
-              </Link>
+              {loading ? (
+                ""
+              ) : (
+                <Link href="#" variant="body2" onClick={handleRegister}>
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              )}
             </Grid>
           </Grid>
         </form>
