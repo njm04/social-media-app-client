@@ -135,3 +135,8 @@ export const getSingleComment = createSelector(
       return comments.find((comment) => comment._id === id);
     })
 );
+
+export const isLoading = createSelector(
+  (state: any) => state.entities.comments,
+  (comments: CommentsSliceState) => comments.loading
+);

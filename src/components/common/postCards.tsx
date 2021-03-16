@@ -13,6 +13,7 @@ import Divider from "@material-ui/core/Divider";
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
 import ChatBubbleIcon from "@material-ui/icons/ChatBubble";
 import TextField from "@material-ui/core/TextField";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import {
   postCommentIncremented,
   likePost,
@@ -23,6 +24,7 @@ import {
   loadComments,
   createComment,
   didCommentFailed,
+  isLoading,
 } from "../../store/comments";
 import { IImage } from "../../interfaces/images";
 import { addLike } from "../../store/likes";
@@ -85,6 +87,7 @@ const PostCard: React.FC<PostCardProps> = ({
   const dispatch = useDispatch();
   const isFailed = useSelector(didCommentFailed);
   const userProfile = useSelector(getUser);
+  const loading = useSelector(isLoading);
   const sorted = orderBy(posts, ["createdAt"], ["desc"]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
@@ -252,7 +255,19 @@ const PostCard: React.FC<PostCardProps> = ({
                       onKeyDown={(e) => onKeyEnter(e, post._id)}
                       onChange={handleComment}
                     />
-                    <Comment postId={post._id} key={post._id} userId={userId} />
+                    {loading ? (
+                      <Grid container justify="center">
+                        <Box mt={2}>
+                          <CircularProgress />
+                        </Box>
+                      </Grid>
+                    ) : (
+                      <Comment
+                        postId={post._id}
+                        key={post._id}
+                        userId={userId}
+                      />
+                    )}
                   </>
                 )}
               </Grid>
