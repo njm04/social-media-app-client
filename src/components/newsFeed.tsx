@@ -47,7 +47,7 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
   const posts = useSelector(getAllPosts);
-  const isPostsLoading = useSelector(isLoading);
+  const loading = useSelector(isLoading);
   const images = useSelector(getImages);
   const [id, setPostId] = useState("");
   const [openModal, setOpenModal] = useState(false);
@@ -68,7 +68,7 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
     <>
       <Post />
       <Container maxWidth="md">
-        {isPostsLoading ? (
+        {loading ? (
           <Box mt={2}>
             <CircularProgress />
           </Box>
