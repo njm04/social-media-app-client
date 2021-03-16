@@ -9,7 +9,12 @@ import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import { loadAcceptedFriends, getAcceptedFriends } from "../store/friends";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import {
+  loadAcceptedFriends,
+  getAcceptedFriends,
+  isLoading,
+} from "../store/friends";
 import StyledBadge from "./common/styledBadge";
 import { IAcceptedFriend } from "../interfaces/friends";
 
@@ -50,6 +55,7 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = ({
   const classes = useStyles();
   const dispatch = useDispatch();
   const friends = useSelector(getAcceptedFriends);
+  const loading = useSelector(isLoading);
 
   useEffect((): any => {
     dispatch(loadAcceptedFriends());
@@ -87,37 +93,41 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = ({
         >
           <Toolbar />
           <div className={classes.drawerContainer}>
-            <List>
-              {friends.map((friend) => (
-                <ListItem
-                  button
-                  key={friend._id}
-                  onClick={() => handleClick(friend)}
-                >
-                  <ListItemAvatar>
-                    <StyledBadge
-                      overlap="circle"
-                      invisible={isOnline(friend.status)}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "right",
-                      }}
-                      variant="dot"
-                    >
-                      <Avatar
-                        alt={friend.fullName}
-                        src={
-                          friend.profilePicture && friend.profilePicture.url
-                            ? friend.profilePicture.url
-                            : ""
-                        }
-                      />
-                    </StyledBadge>
-                  </ListItemAvatar>
-                  <ListItemText primary={friend.fullName} />
-                </ListItem>
-              ))}
-            </List>
+            {loading ? (
+              <CircularProgress style={{ marginTop: 400 }} />
+            ) : (
+              <List>
+                {friends.map((friend) => (
+                  <ListItem
+                    button
+                    key={friend._id}
+                    onClick={() => handleClick(friend)}
+                  >
+                    <ListItemAvatar>
+                      <StyledBadge
+                        overlap="circle"
+                        invisible={isOnline(friend.status)}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        variant="dot"
+                      >
+                        <Avatar
+                          alt={friend.fullName}
+                          src={
+                            friend.profilePicture && friend.profilePicture.url
+                              ? friend.profilePicture.url
+                              : ""
+                          }
+                        />
+                      </StyledBadge>
+                    </ListItemAvatar>
+                    <ListItemText primary={friend.fullName} />
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </div>
         </Drawer>
       </div>

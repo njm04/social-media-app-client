@@ -215,3 +215,8 @@ export const getAcceptedFriends = createSelector(
   (state: any) => state.entities.friends.acceptedFriends,
   (friends: IAcceptedFriend[]) => friends
 );
+
+export const isLoading = createSelector(
+  (state: any) => state.entities.friends,
+  (friends: FriendSliceState) => friends.loading
+);
