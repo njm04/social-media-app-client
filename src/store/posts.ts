@@ -154,3 +154,8 @@ export const getUserPosts = createSelector(
       posts.filter((post) => post.postedBy._id === userId)
     )
 );
+
+export const isLoading = createSelector(
+  (state: any) => state.entities.posts,
+  (posts: PostsSliceState) => posts.loading
+);

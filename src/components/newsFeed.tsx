@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps } from "@reach/router";
-import { loadPosts, getAllPosts } from "../store/posts";
+import { loadPosts, getAllPosts, isLoading } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import Container from "@material-ui/core/Container";
 import { loadLikes } from "../store/likes";
@@ -11,6 +11,8 @@ import { IAuthUser } from "../interfaces/auth";
 import { IAcceptedFriend } from "../interfaces/friends";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import Box from "@material-ui/core/Box";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Post from "./post";
 import PostCard from "./common/postCards";
 import EditPostModal from "./editPostModal";
@@ -45,6 +47,7 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
   const posts = useSelector(getAllPosts);
+  const isPostsLoading = useSelector(isLoading);
   const images = useSelector(getImages);
   const [id, setPostId] = useState("");
   const [openModal, setOpenModal] = useState(false);
@@ -65,13 +68,19 @@ const NewsFeed: React.FC<NewsFeedProps> = () => {
     <>
       <Post />
       <Container maxWidth="md">
-        <PostCard
-          posts={posts}
-          images={images}
-          userId={userId()}
-          setPostId={setPostId}
-          setOpenModal={setOpenModal}
-        />
+        {isPostsLoading ? (
+          <Box mt={2}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <PostCard
+            posts={posts}
+            images={images}
+            userId={userId()}
+            setPostId={setPostId}
+            setOpenModal={setOpenModal}
+          />
+        )}
       </Container>
       <FriendsListDrawer setFriendData={setFriendData} />
       <EditPostModal open={openModal} setOpenModal={setOpenModal} postId={id} />
