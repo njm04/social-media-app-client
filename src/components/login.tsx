@@ -43,12 +43,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-  buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    marginTop: -45,
-    marginLeft: -25,
+  loader: {
+    marginRight: 5,
   },
 }));
 
@@ -154,11 +150,11 @@ const Login: React.FC<LoginProps> = () => {
             color="primary"
             className={classes.submit}
           >
+            {loading && (
+              <CircularProgress size={20} className={classes.loader} />
+            )}
             Sign In
           </Button>
-          {loading && (
-            <CircularProgress size={40} className={classes.buttonProgress} />
-          )}
           <Grid container direction="row" justify="center" alignItems="center">
             {/* <Grid item xs>
               <Link href="#" variant="body2">
