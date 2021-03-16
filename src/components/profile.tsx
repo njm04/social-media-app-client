@@ -15,7 +15,8 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import CancelIcon from "@material-ui/icons/Cancel";
-import { getUserPosts, loadPosts } from "../store/posts";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { getUserPosts, loadPosts, isLoading } from "../store/posts";
 import { loadImages, getImages } from "../store/images";
 import {
   getProfilePicture,
@@ -97,6 +98,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
   const userInfo = useSelector(getUserInfo)(userId);
   const loggedInUser: IAuthUser | null = useSelector(getUser);
   const userPosts = useSelector(getUserPosts)(userId);
+  const loading = useSelector(isLoading);
   const profilePicture = useSelector(getProfilePicture)(userId);
   const coverPhoto = useSelector(getCoverPhoto)(userId);
   const isFriendsSelector = useSelector(isFriends);
@@ -368,13 +370,19 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
               <Paper className={classes.paper}>xs=12 sm=6</Paper>
             </Grid> */}
             <Grid item xs={12} sm={12}>
-              <PostCard
-                userId={userId}
-                posts={userPosts}
-                images={images}
-                setPostId={setPostId}
-                setOpenModal={setOpenModal}
-              />
+              {loading ? (
+                <Box mt={2}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <PostCard
+                  userId={userId}
+                  posts={userPosts}
+                  images={images}
+                  setPostId={setPostId}
+                  setOpenModal={setOpenModal}
+                />
+              )}
             </Grid>
           </Grid>
         </div>
