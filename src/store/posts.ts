@@ -49,7 +49,6 @@ const slice = createSlice({
       const { _id } = action.payload;
       const index = posts.list.findIndex((post: any) => post._id === _id);
       posts.list[index].likes = action.payload.likes;
-      posts.loading = false;
     },
     postDeleted: (posts, action: PayloadAction<IPost>) => {
       const { _id } = action.payload;
@@ -108,9 +107,7 @@ export const likePost = (data: object) => {
     url: `${url}/like`,
     method: "POST",
     data,
-    onStart: postsRequested.type,
     onSuccess: postsLikesReceived.type,
-    onError: postsFailed.type,
   });
 };
 
