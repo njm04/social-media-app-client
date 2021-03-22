@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ReactPlayer from "react-player";
 import { useDispatch, useSelector } from "react-redux";
 import { orderBy } from "lodash";
 import { navigate } from "@reach/router";
@@ -47,7 +48,13 @@ export interface PostCardProps {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
+      display: "flex",
+      flexWrap: "wrap",
+      justifyContent: "space-around",
+      height: "360px",
+      width: "640px",
+      // overflow: "hidden",
+      // backgroundColor: theme.palette.background.paper,
     },
     paper: {
       margin: `${theme.spacing(1)}px auto`,
@@ -72,6 +79,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     link: {
       cursor: "pointer",
+    },
+    gridList: {
+      flexWrap: "nowrap",
+      // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+      transform: "translateZ(0)",
     },
   })
 );
@@ -172,6 +184,18 @@ const PostCard: React.FC<PostCardProps> = ({
     return;
   };
 
+  const isUrl = (post: string) => {
+    let height = "360px";
+    const urlPattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
+    const fbUrlPattern = /^(https?:\/\/)?(www\.)?facebook.com\/[a-zA-Z0-9(.?)?]/;
+    if (fbUrlPattern.test(post)) height = "100%";
+    if (urlPattern.test(post.toLocaleLowerCase()))
+      return (
+        <ReactPlayer url={post} controls={true} width="100%" height={height} />
+      );
+    return <Typography>{post}</Typography>;
+  };
+
   return (
     <>
       {sorted.map((post) => (
@@ -210,7 +234,7 @@ const PostCard: React.FC<PostCardProps> = ({
               </Grid>
               <Grid item xs={12}>
                 <Box px={7} py={2}>
-                  <Typography>{post.post}</Typography>
+                  {isUrl(post.post)}
                   {displayPostImage(post.postImages)}
                 </Box>
               </Grid>
