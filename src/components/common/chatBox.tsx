@@ -5,18 +5,23 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
-import TextField from "@material-ui/core/TextField";
 import SendIcon from "@material-ui/icons/Send";
 import StyledBadge from "./styledBadge";
 import MinimizeIcon from "@material-ui/icons/Minimize";
 import CloseIcon from "@material-ui/icons/Close";
 import Tooltip from "@material-ui/core/Tooltip";
+import Emoji from "react-emoji-render";
+import { Picker, BaseEmoji } from "emoji-mart";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import FormControl from "@material-ui/core/FormControl";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InsertEmoticonTwoToneIcon from "@material-ui/icons/InsertEmoticonTwoTone";
+import Popover from "@material-ui/core/Popover";
 import { IAcceptedFriend } from "../../interfaces/friends";
 import { getUser } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
@@ -83,6 +88,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   >([]);
   const messageListRef = useRef<HTMLDivElement>(null);
   const authUser: IAuthUser | null = useSelector(getUser);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   useEffect((): any => {
     // scroll to bottom when message list overlaps the card content height
@@ -127,6 +135,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     setInput(e.target.value);
   };
 
+  const handleEmojiSelect = (emoji: BaseEmoji) => {
+    if (emoji && emoji.colons) setInput(`${input} ${emoji.native} `);
+  };
+
   const sendMessage = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     if (input) {
@@ -144,6 +156,57 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
       setInput("");
     }
+  };
+
+  const isOnline = (status: string) => {
+    if (status === "active") return false;
+    return true;
+  };
+
+  const handleClose = () => {
+    setFriendData((data) => {
+      const index = data.findIndex((friend) => friend._id === friendData._id);
+      data.splice(index, 1);
+      return [...data];
+    });
+  };
+
+  const toggleMinimize = () => {
+    setMinimize(minimize ? false : true);
+  };
+
+  const handleOpenEmojiPicker = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseEmojiPicker = () => {
+    setAnchorEl(null);
+  };
+
+  const renderEmojiPopover = () => {
+    return (
+      // FIX: popover disables scrolling better to use popper
+      <Popover
+        id={id}
+        open={open}
+        anchorReference="anchorPosition"
+        anchorPosition={{ top: 450, left: 1643 }}
+        onClose={handleCloseEmojiPicker}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        {/* TODO: make this picker a reusable component */}
+        <Picker set="facebook" onSelect={handleEmojiSelect} title="" />
+      </Popover>
+    );
   };
 
   const listItem = () => {
@@ -165,9 +228,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography component="p" style={{ wordWrap: "break-word" }}>
-                    {data.message}
-                  </Typography>
+                  <div style={{ wordWrap: "break-word" }}>
+                    <Emoji text={data.message} />
+                  </div>
                 </Grid>
               </Grid>
             </CardContent>
@@ -181,32 +244,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           <Card className={classes.card} style={{ backgroundColor: "#0b81ff" }}>
             <CardContent>
               <Grid item xs={12}>
-                <Typography component="p" style={{ wordWrap: "break-word" }}>
-                  {data.message}
-                </Typography>
+                <div style={{ wordWrap: "break-word" }}>
+                  <Emoji text={data.message} />
+                </div>
               </Grid>
             </CardContent>
           </Card>
         </ListItem>
       );
     });
-  };
-
-  const isOnline = (status: string) => {
-    if (status === "active") return false;
-    return true;
-  };
-
-  const handleClose = () => {
-    setFriendData((data) => {
-      const index = data.findIndex((friend) => friend._id === friendData._id);
-      data.splice(index, 1);
-      return [...data];
-    });
-  };
-
-  const toggleMinimize = () => {
-    setMinimize(minimize ? false : true);
   };
 
   return !minimize ? (
@@ -254,26 +300,44 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         </div>
       </CardContent>
       <CardActions>
+        {renderEmojiPopover()}
         <form noValidate autoComplete="off">
-          <TextField
-            value={input}
-            autoComplete="off"
-            id="outlined-basic"
-            placeholder="Aa"
-            variant="outlined"
-            size="small"
-            onChange={handleInput}
-            // onKeyDown={onKeyEnter}
-          />
-          <IconButton
-            disabled={!input}
-            color="primary"
-            aria-label="send message"
-            type="submit"
-            onClick={sendMessage}
-          >
-            <SendIcon />
-          </IconButton>
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Grid item xs={10}>
+              <FormControl size="small">
+                <OutlinedInput
+                  value={input}
+                  onChange={handleInput}
+                  id="chatbox-message"
+                  placeholder="Aa"
+                  autoComplete="off"
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="emoji picker"
+                        onClick={handleOpenEmojiPicker}
+                      >
+                        <InsertEmoticonTwoToneIcon
+                          style={{ color: "#af861f" }}
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={2}>
+              <IconButton
+                disabled={!input}
+                color="primary"
+                aria-label="send message"
+                type="submit"
+                onClick={sendMessage}
+              >
+                <SendIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
         </form>
       </CardActions>
     </Card>
