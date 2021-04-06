@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { navigate } from "@reach/router";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -29,6 +29,7 @@ import { getProfilePicture } from "../../store/users";
 import { IUserSearched } from "../../interfaces/users";
 import { search } from "../../services/searchFriendService";
 import Notifications from "../common/notifications";
+import { useUserData } from "../../custom_hooks/useUserData";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -74,11 +75,11 @@ export interface NavBarProps {}
 const NavBar: React.FC<NavBarProps> = () => {
   const dispatch = useDispatch();
   const user: IAuthUser | null = useSelector(getUser);
-  const userId = user && user._id ? user._id : "";
+  const userId = useUserData(user, "id");
+  const name = useUserData(user, "fullName");
   const profilePicture = useSelector(getProfilePicture)(userId);
   const friendRequest = useSelector(getFriends)(userId);
   const [friendRequestBadge, setFriendRequestBadge] = useState<number>(0);
-  const [name] = useState<string>(user && user.fullName ? user.fullName : "");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<IUserSearched[]>();
   const classes = useStyles();
