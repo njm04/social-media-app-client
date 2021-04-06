@@ -2,6 +2,7 @@ import moment from "moment";
 import { storage } from "../firebase.config";
 import { IPostImages } from "../interfaces/posts";
 import { IAuthUser } from "../interfaces/auth";
+import { IUser } from "../interfaces/users";
 
 export const getInitials = (name: string) => {
   if (name)
@@ -52,4 +53,16 @@ export const deleteUploadedImages = (images: IPostImages[]) => {
         });
     });
   }
+};
+
+export const isOnline = (
+  status: string = "",
+  data: IUser | undefined = undefined
+) => {
+  if (data && data.status === "active") {
+    return false;
+  } else if (status === "active") {
+    return false;
+  }
+  return true;
 };

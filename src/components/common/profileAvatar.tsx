@@ -5,7 +5,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { getProfilePicture, getUser } from "../../store/users";
-import { getInitials } from "../../utils/utils";
+import { getInitials, isOnline } from "../../utils/utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,11 +30,6 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
   const user = useSelector(getUser)(userId);
   const avatar = useSelector(getProfilePicture)(userId);
 
-  const isOnline = () => {
-    if (user && user.status === "active") return false;
-    return true;
-  };
-
   const renderAvatar = () => {
     if (avatar && handleProfileOpen) {
       return (
@@ -43,7 +38,7 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
             classes={{ badge: classes.customBadge }}
             overlap="circle"
             badgeContent=" "
-            invisible={isOnline()}
+            invisible={isOnline("", user)}
             variant="dot"
             anchorOrigin={{
               vertical: "bottom",
@@ -61,7 +56,7 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
             classes={{ badge: classes.customBadge }}
             overlap="circle"
             badgeContent=" "
-            invisible={isOnline()}
+            invisible={isOnline("", user)}
             variant="dot"
             anchorOrigin={{
               vertical: "bottom",
@@ -78,7 +73,7 @@ const ProfileAvatar: React.FC<ProfileAvatarProps> = ({
           classes={{ badge: classes.customBadge }}
           overlap="circle"
           badgeContent=" "
-          invisible={isOnline()}
+          invisible={isOnline("", user)}
           variant="dot"
           anchorOrigin={{
             vertical: "bottom",

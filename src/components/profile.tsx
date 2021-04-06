@@ -38,7 +38,7 @@ import { IAuthUser } from "../interfaces/auth";
 import { getUser } from "../store/auth";
 import { loadUsers } from "../store/users";
 import { loadLikes } from "../store/likes";
-import { getInitials } from "../utils/utils";
+import { getInitials, isOnline } from "../utils/utils";
 import EditPostModal from "./editPostModal";
 import PostCard from "./common/postCards";
 import EditProfileModal from "./editProfileModal";
@@ -290,11 +290,6 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
     }
   };
 
-  const isOnline = () => {
-    if (userInfo && userInfo.status === "active") return false;
-    return true;
-  };
-
   return (
     <>
       <CssBaseline />
@@ -316,7 +311,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                   {profilePicture ? (
                     <StyledBadge
                       overlap="circle"
-                      invisible={isOnline()}
+                      invisible={isOnline("", userInfo)}
                       variant="dot"
                     >
                       <Avatar
@@ -328,7 +323,7 @@ const Profile: React.FC<ProfileProps> = ({ location }: ProfileProps) => {
                   ) : (
                     <StyledBadge
                       overlap="circle"
-                      invisible={isOnline()}
+                      invisible={isOnline("", userInfo)}
                       variant="dot"
                     >
                       <Avatar className={classes.avatar}>

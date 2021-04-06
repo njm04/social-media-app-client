@@ -17,6 +17,7 @@ import {
 } from "../store/friends";
 import StyledBadge from "./common/styledBadge";
 import { IAcceptedFriend } from "../interfaces/friends";
+import { isOnline } from "../utils/utils";
 
 const drawerWidth = 240;
 
@@ -72,11 +73,6 @@ const FriendsListDrawer: React.FC<FriendsListDrawerProps> = ({
       if (!friendData.includes(friend)) return [...friendData, friend];
       return friendData;
     });
-  };
-
-  const isOnline = (status: string) => {
-    if (status === "active") return false;
-    return true;
   };
 
   if (friends.length > 0) {

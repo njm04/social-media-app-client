@@ -27,6 +27,7 @@ import { getUser } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
 import firebase, { db } from "../../firebase.config";
 import { orderBy } from "lodash";
+import { isOnline } from "../../utils/utils";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -156,11 +157,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
       setInput("");
     }
-  };
-
-  const isOnline = (status: string) => {
-    if (status === "active") return false;
-    return true;
   };
 
   const handleClose = () => {
