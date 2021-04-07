@@ -203,7 +203,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         // onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
@@ -238,7 +238,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 </Grid>
               </Grid>
               <Box
-                bgcolor="secondary.main"
+                bgcolor="text.disabled"
                 p={5}
                 display="flex"
                 className={classes.box}
@@ -277,7 +277,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 </Grid>
               </Grid>
               <Box
-                bgcolor="secondary.main"
+                bgcolor="text.disabled"
                 p={5}
                 display="flex"
                 className={classes.box}
@@ -285,7 +285,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 {cover ? (
                   // <div className={classes.div}>
                   <GridList
-                    cellHeight={300}
+                    cellHeight={400}
                     className={classes.gridList}
                     cols={1}
                   >
