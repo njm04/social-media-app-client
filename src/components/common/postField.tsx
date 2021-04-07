@@ -14,6 +14,7 @@ import { getUser } from "../../store/auth";
 import { IAuthUser } from "../../interfaces/auth";
 import { IImageData } from "../../interfaces/images";
 import { storage } from "../../firebase.config";
+import { useUserData } from "../../custom_hooks/useUserData";
 import ImageUploadGrid from "./../imageUploadGrid";
 
 export interface PostFieldProps {
@@ -49,6 +50,7 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
   const dispatch = useDispatch();
   const classes = useStyles();
   const user: IAuthUser | null = useSelector(getUser);
+  const userId = useUserData(user, "id");
   const loading = useSelector(isLoading);
   const [post, setPost] = useState("");
   const [images, setImages] = useState<IImageData[]>([]);
@@ -97,7 +99,6 @@ const PostField: React.FC<PostFieldProps> = ({ root }: PostFieldProps) => {
     imageFile: Blob | Uint8Array | ArrayBuffer
   ): Promise<ImageData> => {
     return new Promise((resolve, reject) => {
-      const userId: string = user && user._id ? user._id : "";
       let currentImageName = `firebase-image-${Date.now()}-${userId}`;
       let uploadImage = storage
         .ref(`images/${currentImageName}`)
