@@ -3,6 +3,7 @@ import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: theme.spacing(3),
     },
     card: {
-      maxWidth: 350,
+      maxWidth: 150,
       height: "auto",
     },
   })
@@ -147,7 +148,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         const payload = {
           message: input,
           participants: [authUser._id, friendData._id],
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
           sentBy: { id: authUser._id, fullName: authUser.fullName },
         };
         db.collection("messages").add(payload);
@@ -205,47 +206,84 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     );
   };
 
+  const messageTime = (createdAt: firebase.firestore.Timestamp) => {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
+    return (
+      <Typography variant="body2" color="textSecondary">
+        {createdAt.toDate().toLocaleString("en-US", options)}
+      </Typography>
+    );
+  };
+
   const listItem = () => {
     return messages.map((data, index) => {
       const key = index + "" + data.participants.join("");
 
       return authUser && data.sentBy && authUser._id !== data.sentBy.id ? (
         <ListItem alignItems="flex-start" key={key}>
-          <Card className={classes.card} style={{ backgroundColor: "#e9e9eb" }}>
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item>
-                  <Avatar
-                    alt={friendData.fullName}
-                    src={
-                      friendData.profilePicture && friendData.profilePicture.url
-                    }
-                    className={classes.smallAvatar}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <div style={{ wordWrap: "break-word" }}>
-                    <Emoji text={data.message} />
-                  </div>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          <Grid>
+            <Grid item xs={12}>
+              <Card
+                className={classes.card}
+                style={{ backgroundColor: "#e9e9eb" }}
+              >
+                <CardContent>
+                  <Grid container spacing={1}>
+                    <Grid item>
+                      <Avatar
+                        alt={friendData.fullName}
+                        src={
+                          friendData.profilePicture &&
+                          friendData.profilePicture.url
+                        }
+                        className={classes.smallAvatar}
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <div style={{ wordWrap: "break-word" }}>
+                        <Emoji text={data.message} />
+                      </div>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              {messageTime(data.createdAt)}
+            </Grid>
+          </Grid>
         </ListItem>
       ) : (
         <ListItem
           key={key}
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
-          <Card className={classes.card} style={{ backgroundColor: "#0b81ff" }}>
-            <CardContent>
-              <Grid item xs={12}>
-                <div style={{ wordWrap: "break-word" }}>
-                  <Emoji text={data.message} />
-                </div>
-              </Grid>
-            </CardContent>
-          </Card>
+          <Grid>
+            <Grid item xs={12}>
+              <Card
+                className={classes.card}
+                style={{ backgroundColor: "#0b81ff" }}
+              >
+                <CardContent>
+                  <Grid item xs={12}>
+                    <div style={{ wordWrap: "break-word" }}>
+                      <Emoji text={data.message} />
+                    </div>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12}>
+              {messageTime(data.createdAt)}
+            </Grid>
+          </Grid>
         </ListItem>
       );
     });
