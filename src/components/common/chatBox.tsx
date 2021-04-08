@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
+import Button from "@material-ui/core/Button";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -22,6 +23,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import FormControl from "@material-ui/core/FormControl";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InsertEmoticonTwoToneIcon from "@material-ui/icons/InsertEmoticonTwoTone";
+import InsertPhotoIcon from "@material-ui/icons/InsertPhoto";
 import Popover from "@material-ui/core/Popover";
 import { IAcceptedFriend } from "../../interfaces/friends";
 import { getUser } from "../../store/auth";
@@ -337,6 +339,25 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         {renderEmojiPopover()}
         <form noValidate autoComplete="off">
           <Grid container direction="row" justify="center" alignItems="center">
+            {/* Make sending image in chat work */}
+            {/* <Grid item xs={2}>
+              <input
+                accept="image/*"
+                id="post-uploads"
+                multiple
+                type="file"
+                style={{ display: "none" }}
+              />
+              <label htmlFor="post-uploads">
+                <IconButton
+                  color="primary"
+                  aria-label="upload picture"
+                  component="span"
+                >
+                  <InsertPhotoIcon />
+                </IconButton>
+              </label>
+            </Grid> */}
             <Grid item xs={10}>
               <FormControl size="small">
                 <OutlinedInput
