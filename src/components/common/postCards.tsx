@@ -27,6 +27,7 @@ import {
   didCommentFailed,
   isLoading,
 } from "../../store/comments";
+import { deleteImage } from "../../store/images";
 import { IImage } from "../../interfaces/images";
 import { addLike } from "../../store/likes";
 import { getDate, getProfileName } from "../../utils/utils";
@@ -142,6 +143,7 @@ const PostCard: React.FC<PostCardProps> = ({
 
   const handleDeletePost = (postId: string) => {
     dispatch(deletePost(postId));
+    dispatch(deleteImage(postId));
   };
 
   const handleProfileOpen = (id: string) => {

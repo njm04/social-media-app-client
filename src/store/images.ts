@@ -55,6 +55,12 @@ const slice = createSlice({
       images.loading = false;
       toast.dark("Cover photo updated!");
     },
+    imageDeleted: (images, action: PayloadAction<IImage>) => {
+      const { _id } = action.payload;
+      const index = images.list.findIndex((image: IImage) => image._id === _id);
+      images.list.splice(index, 1);
+      images.loading = false;
+    },
   },
 });
 
@@ -64,6 +70,7 @@ const {
   imagesReceived,
   imageReceived,
   coverPhotoUpdated,
+  imageDeleted,
 } = slice.actions;
 export default slice.reducer;
 
@@ -97,6 +104,16 @@ export const updateCoverPhoto = (userId: string, imageData: IImageData) => {
     data: imageData,
     onStart: imagesRequested.type,
     onSuccess: coverPhotoUpdated.type,
+    onError: imagesFailed.type,
+  });
+};
+
+export const deleteImage = (postId: string) => {
+  return apiCallBegan({
+    url: `${url}/${postId}`,
+    method: "DELETE",
+    onStart: imagesRequested.type,
+    onSuccess: imageDeleted.type,
     onError: imagesFailed.type,
   });
 };
